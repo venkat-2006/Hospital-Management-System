@@ -1,0 +1,1 @@
+A full-stack Hospital Management System that digitizes hospital operations such as patient registration, appointment scheduling, medical records, prescriptions, billing, pharmacy inventory, and lab reports with role-based access control.
