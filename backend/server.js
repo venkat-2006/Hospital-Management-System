@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 
 const patientRoutes = require("./routes/patientRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/patients", patientRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hospital Management System API running");
