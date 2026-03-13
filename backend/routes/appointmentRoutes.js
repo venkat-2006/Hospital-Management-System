@@ -3,10 +3,37 @@ const router = express.Router();
 
 const appointmentController = require("../controllers/appointmentController");
 
-router.post("/", appointmentController.createAppointment);
+const verifyToken = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
 
-router.get("/", appointmentController.getAppointments);
+////////////////////////////////////////////////////
+// RECEPTIONIST / ADMIN → schedule appointment
+////////////////////////////////////////////////////
+router.post(
+  "/",
+  verifyToken,
+  authorizeRoles("RECEPTIONIST", "ADMIN"),
+  appointmentController.createAppointment
+);
 
-router.get("/doctor/:doctorId", appointmentController.getAppointmentsByDoctor);
+////////////////////////////////////////////////////
+// ADMIN / RECEPTIONIST → view all appointments
+////////////////////////////////////////////////////
+router.get(
+  "/",
+  verifyToken,
+  authorizeRoles("ADMIN", "RECEPTIONIST"),
+  appointmentController.getAppointments
+);
+
+////////////////////////////////////////////////////
+// DOCTOR → view their own appointments
+////////////////////////////////////////////////////
+router.get(
+  "/doctor",
+  verifyToken,
+  authorizeRoles("DOCTOR"),
+  appointmentController.getDoctorAppointments
+);
 
 module.exports = router;

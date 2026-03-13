@@ -3,21 +3,47 @@ const requestModel = require("../models/requestModel");
 const createRequest = async (req, res) => {
 
   try {
-    const request = await requestModel.createRequest(req.body);
+
+    const patientId = req.user.id; // coming from JWT
+
+    const { department, preferred_date, reason } = req.body;
+
+    const request = await requestModel.createRequest({
+      patient_id: patientId,
+      department,
+      preferred_date,
+      reason
+    });
+
     res.json(request);
+
   } catch (error) {
-    res.status(500).json({ message: "Error creating request" });
+
+    console.error("REQUEST ERROR:", error);
+
+    res.status(500).json({
+      message: "Error creating request"
+    });
+
   }
 
 };
 
+
 const getRequests = async (req, res) => {
 
   try {
+
     const requests = await requestModel.getRequests();
+
     res.json(requests);
+
   } catch (error) {
-    res.status(500).json({ message: "Error fetching requests" });
+
+    res.status(500).json({
+      message: "Error fetching requests"
+    });
+
   }
 
 };

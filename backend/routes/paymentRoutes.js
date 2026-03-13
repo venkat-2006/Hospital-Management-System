@@ -3,8 +3,27 @@ const router = express.Router();
 
 const paymentController = require("../controllers/paymentController");
 
-router.post("/", paymentController.createPayment);
+const verifyToken = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
 
-router.get("/:billId", paymentController.getPaymentsByBill);
+/*
+Patient pays bill
+*/
+router.post(
+  "/",
+  verifyToken,
+  authorizeRoles("PATIENT","ADMIN"),
+  paymentController.createPayment
+);
+
+/*
+View payments for bill
+*/
+router.get(
+  "/bill/:billId",
+  verifyToken,
+  authorizeRoles("ADMIN","PATIENT","RECEPTIONIST"),
+  paymentController.getPaymentsByBill
+);
 
 module.exports = router;

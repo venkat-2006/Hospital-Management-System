@@ -1,29 +1,29 @@
 const express = require("express");
 const router = express.Router();
 
-const requestController = require("../controllers/requestController");
-
+const userController = require("../controllers/userController");
 const verifyToken = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
 
-/*
-PATIENT creates request
-*/
 router.post(
   "/",
   verifyToken,
-  authorizeRoles("PATIENT"),
-  requestController.createRequest
+  authorizeRoles("ADMIN"),
+  userController.createUser
 );
 
-/*
-RECEPTIONIST / ADMIN view requests
-*/
 router.get(
   "/",
   verifyToken,
-  authorizeRoles("RECEPTIONIST", "ADMIN"),
-  requestController.getRequests
+  authorizeRoles("ADMIN"),
+  userController.getUsers
+);
+
+router.delete(
+  "/:id",
+  verifyToken,
+  authorizeRoles("ADMIN"),
+  userController.deleteUser
 );
 
 module.exports = router;

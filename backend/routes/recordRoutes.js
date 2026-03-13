@@ -3,7 +3,27 @@ const router = express.Router();
 
 const recordController = require("../controllers/recordController");
 
-router.post("/", recordController.createRecord);
-router.get("/:patientId", recordController.getRecordsByPatient);
+const verifyToken = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
+
+/*
+DOCTOR creates medical record
+*/
+router.post(
+  "/",
+  verifyToken,
+  authorizeRoles("DOCTOR"),
+  recordController.createRecord
+);
+
+/*
+DOCTOR / ADMIN view patient records
+*/
+router.get(
+  "/:patientId",
+  verifyToken,
+  authorizeRoles("DOCTOR", "ADMIN"),
+  recordController.getRecordsByPatient
+);
 
 module.exports = router;

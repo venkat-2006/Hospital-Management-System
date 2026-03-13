@@ -15,6 +15,10 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const doctorRoutes =require("./routes/doctorRoutes");
 
+const seedAdmin = require("./utils/adminSeeder");
+const userRoutes = require("./routes/userRoutes");
+
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
@@ -26,7 +30,7 @@ app.use("/auth", authRoutes);
 
 app.use("/payments", paymentRoutes);
 
-app.use("/records", recordRoutes);
+app.use("/medical-records", recordRoutes);
 app.use("/prescriptions", prescriptionRoutes);
 app.use("/medicines", medicineRoutes);
 app.use("/lab-reports", labRoutes);
@@ -35,12 +39,18 @@ app.use("/requests", requestRoutes);
 app.use("/appointments", appointmentRoutes);
 app.use("/doctor",doctorRoutes);
 
+app.use("/users", userRoutes);
+
+app.use("/dashboard", dashboardRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hospital Management System API running");
 });
 
 const PORT = process.env.PORT || 5000;
+
+seedAdmin();
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

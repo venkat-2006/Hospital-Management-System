@@ -1,16 +1,20 @@
 const pool = require("../config/db");
 
+/*
+Create bill
+*/
 const createBill = async (data) => {
 
   const query = `
-  INSERT INTO bills(patient_id, total_amount, status)
-  VALUES ($1,$2,$3)
-  RETURNING *`;
+    INSERT INTO billing
+    (patient_id, amount, status)
+    VALUES ($1,$2,'pending')
+    RETURNING *
+  `;
 
   const values = [
     data.patient_id,
-    data.total_amount,
-    data.status
+    data.amount
   ];
 
   const result = await pool.query(query, values);
@@ -18,17 +22,39 @@ const createBill = async (data) => {
   return result.rows[0];
 };
 
+
+/*
+Get bills for patient
+*/
 const getBillsByPatient = async (patientId) => {
 
   const result = await pool.query(
-    "SELECT * FROM bills WHERE patient_id=$1",
+    "SELECT * FROM billing WHERE patient_id=$1",
     [patientId]
   );
 
   return result.rows;
 };
 
+
+/*
+Update bill status
+*/
+const updateBillStatus = async (billId, status) => {
+
+  const result = await pool.query(
+    `UPDATE billing
+     SET status=$1
+     WHERE id=$2
+     RETURNING *`,
+    [status, billId]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   createBill,
-  getBillsByPatient
+  getBillsByPatient,
+  updateBillStatus
 };

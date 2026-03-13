@@ -1,21 +1,56 @@
 const prescriptionModel = require("../models/prescriptionModel");
 
+/*
+Doctor creates prescription
+*/
 const createPrescription = async (req, res) => {
+
   try {
-    const prescription = await prescriptionModel.createPrescription(req.body);
+
+    const { record_id, medicine_name, dosage, duration } = req.body;
+
+    const prescription = await prescriptionModel.createPrescription({
+      record_id,
+      medicine_name,
+      dosage,
+      duration
+    });
+
     res.json(prescription);
+
   } catch (error) {
-    res.status(500).json({ message: "Error creating prescription" });
+
+    console.error("PRESCRIPTION ERROR:", error);
+
+    res.status(500).json({
+      message: "Error creating prescription"
+    });
+
   }
+
 };
 
+
+/*
+Get prescriptions for patient
+*/
 const getPrescriptionsByPatient = async (req, res) => {
+
   try {
-    const prescriptions = await prescriptionModel.getPrescriptionsByPatient(req.params.patientId);
+
+    const prescriptions =
+      await prescriptionModel.getPrescriptionsByPatient(req.params.patientId);
+
     res.json(prescriptions);
+
   } catch (error) {
-    res.status(500).json({ message: "Error fetching prescriptions" });
+
+    res.status(500).json({
+      message: "Error fetching prescriptions"
+    });
+
   }
+
 };
 
 module.exports = {

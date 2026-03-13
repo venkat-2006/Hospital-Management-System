@@ -1,5 +1,8 @@
 const pool = require("../config/db");
 
+/*
+Create appointment
+*/
 const createAppointment = async (data) => {
 
   const query = `
@@ -20,12 +23,40 @@ const createAppointment = async (data) => {
   return result.rows[0];
 };
 
+
+/*
+Check if doctor slot already booked
+*/
+const checkDoctorSlot = async (doctorId, appointmentTime) => {
+
+  const query = `
+    SELECT * FROM appointments
+    WHERE doctor_id = $1
+    AND appointment_time = $2
+  `;
+
+  const result = await pool.query(query, [
+    doctorId,
+    appointmentTime
+  ]);
+
+  return result.rows.length > 0;
+
+};
+
+
+/*
+Get all appointments
+*/
 const getAppointments = async () => {
 
   const result = await pool.query(`
-    SELECT a.*, p.name AS patient_name, d.name AS doctor_name
+    SELECT 
+      a.*,
+      u.name AS patient_name,
+      d.name AS doctor_name
     FROM appointments a
-    JOIN patients p ON a.patient_id = p.id
+    JOIN users u ON a.patient_id = u.id
     JOIN doctors d ON a.doctor_id = d.id
     ORDER BY appointment_time
   `);
@@ -33,18 +64,27 @@ const getAppointments = async () => {
   return result.rows;
 };
 
+
+/*
+Get doctor appointments
+*/
 const getAppointmentsByDoctor = async (doctorId) => {
 
   const result = await pool.query(
-    "SELECT * FROM appointments WHERE doctor_id=$1",
+    `SELECT * 
+     FROM appointments
+     WHERE doctor_id=$1
+     ORDER BY appointment_time`,
     [doctorId]
   );
 
   return result.rows;
+
 };
 
 module.exports = {
   createAppointment,
+  checkDoctorSlot,
   getAppointments,
   getAppointmentsByDoctor
 };

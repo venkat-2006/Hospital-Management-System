@@ -23,10 +23,14 @@ const createRequest = async (data) => {
 const getRequests = async () => {
 
   const result = await pool.query(
-    "SELECT * FROM appointment_requests"
+    `SELECT ar.*, u.name AS patient_name
+     FROM appointment_requests ar
+     JOIN users u ON ar.patient_id = u.id
+     ORDER BY ar.created_at DESC`
   );
 
   return result.rows;
+
 };
 
 module.exports = {
