@@ -1,28 +1,84 @@
 const pool = require("../config/db");
 
-const createDoctor = async (data) => {
-  const query = `
-  INSERT INTO doctors(name, specialization, experience, phone)
-  VALUES($1,$2,$3,$4)
-  RETURNING *`;
-
-  const values = [
-    data.name,
-    data.specialization,
-    data.experience,
-    data.phone
-  ];
-
-  const result = await pool.query(query, values);
-  return result.rows[0];
+const getDoctors = async () => {
+  const result = await pool.query(
+    `SELECT d.*, u.email 
+     FROM doctors d 
+     JOIN users u ON d.user_id = u.id`
+  );
+  return result.rows;
 };
 
-const getDoctors = async () => {
-  const result = await pool.query("SELECT * FROM doctors");
+const getDoctorPatients = async (doctorId) => {
+  const result = await pool.query(
+    `SELECT DISTINCT
+      p.id as patient_id,
+      p.name,
+      p.gender,
+      p.phone,
+      p.address,
+      p.date_of_birth
+     FROM patients p
+     JOIN appointments a ON a.patient_id = p.id
+     WHERE a.doctor_id = $1`,
+    [doctorId]
+  );
+  return result.rows;
+};
+
+const getPatientFullData = async (doctorId, patientId) => {
+  const appointments = await pool.query(
+    `SELECT * FROM appointments
+     WHERE doctor_id = $1 AND patient_id = $2
+     ORDER BY appointment_time DESC`,
+    [doctorId, patientId]
+  );
+
+  const records = await pool.query(
+    `SELECT * FROM medical_records
+     WHERE doctor_id = $1 AND patient_id = $2`,
+    [doctorId, patientId]
+  );
+
+  const prescriptions = await pool.query(
+    `SELECT pr.* FROM prescriptions pr
+     JOIN medical_records mr ON pr.record_id = mr.id
+     WHERE mr.doctor_id = $1 AND mr.patient_id = $2`,
+    [doctorId, patientId]
+  );
+
+  const labReports = await pool.query(
+    `SELECT * FROM lab_reports
+     WHERE doctor_id = $1 AND patient_id = $2`,
+    [doctorId, patientId]
+  );
+
+  return {
+    appointments: appointments.rows,
+    medical_records: records.rows,
+    prescriptions: prescriptions.rows,
+    lab_reports: labReports.rows
+  };
+};
+
+const getDoctorAppointments = async (doctorId) => {
+  const result = await pool.query(
+    `SELECT
+      a.*,
+      p.name as patient_name,
+      p.phone as patient_phone
+     FROM appointments a
+     JOIN patients p ON a.patient_id = p.id
+     WHERE a.doctor_id = $1
+     ORDER BY a.appointment_time DESC`,
+    [doctorId]
+  );
   return result.rows;
 };
 
 module.exports = {
-  createDoctor,
-  getDoctors
+  getDoctors,
+  getDoctorPatients,
+  getPatientFullData,
+  getDoctorAppointments
 };

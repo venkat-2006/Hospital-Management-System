@@ -50,8 +50,9 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-seedAdmin();
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
+
+  await seedAdmin();
 });

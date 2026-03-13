@@ -1,10 +1,25 @@
 const requestModel = require("../models/requestModel");
+const pool = require("../config/db");
 
 const createRequest = async (req, res) => {
 
   try {
 
-    const patientId = req.user.id; // coming from JWT
+    const userId = req.user.id; // from JWT
+
+    // get patient profile linked to this user
+    const patient = await pool.query(
+      "SELECT id FROM patients WHERE user_id=$1",
+      [userId]
+    );
+
+    if (patient.rows.length === 0) {
+      return res.status(400).json({
+        message: "Patient profile not found"
+      });
+    }
+
+    const patientId = patient.rows[0].id;
 
     const { department, preferred_date, reason } = req.body;
 
