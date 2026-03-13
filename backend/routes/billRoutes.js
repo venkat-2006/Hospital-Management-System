@@ -2,27 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 const billController = require("../controllers/billController");
-
 const verifyToken = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
 
-/*
-Receptionist generates bill
-*/
 router.post(
   "/",
   verifyToken,
-  authorizeRoles("RECEPTIONIST","ADMIN"),
+  authorizeRoles("RECEPTIONIST", "ADMIN"),
   billController.createBill
 );
 
-/*
-Patient views their bills
-*/
 router.get(
   "/patient/:patientId",
   verifyToken,
-  authorizeRoles("PATIENT","ADMIN"),
+  authorizeRoles("PATIENT", "ADMIN"),
   billController.getBillsByPatient
 );
 
