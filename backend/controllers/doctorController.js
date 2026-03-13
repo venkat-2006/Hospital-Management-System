@@ -72,10 +72,40 @@ const getMyPatientData = async (req, res) => {
   }
 };
 
+const updateMyAppointment = async (req, res) => {
+  try {
+    const doctorId = await getDoctorId(req.user.id);
+    const { status } = req.body;
+    const { appointmentId } = req.params;
+
+    const validStatuses = ['scheduled', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid status. Use: scheduled, completed, cancelled" });
+    }
+
+    const updated = await doctorModel.updateAppointmentStatus(
+      appointmentId,
+      doctorId,
+      status
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Appointment not found or unauthorized" });
+    }
+
+    res.json(updated);
+
+  } catch (error) {
+    console.error("UPDATE APPOINTMENT ERROR:", error);
+    res.status(500).json({ message: "Error updating appointment" });
+  }
+};
+
 module.exports = {
   getDoctors,
   getMyProfile,
   getMyAppointments,
   getMyPatients,
-  getMyPatientData
+  getMyPatientData,
+  updateMyAppointment   
 };

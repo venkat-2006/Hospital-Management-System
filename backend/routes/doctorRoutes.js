@@ -39,5 +39,10 @@ router.get(
   authorizeRoles("DOCTOR"),
   doctorController.getMyPatientData
 );
-
+router.patch(
+  "/my-appointments/:appointmentId",
+  verifyToken,
+  authorizeRoles("DOCTOR"),
+  doctorController.updateMyAppointment
+);
 module.exports = router;

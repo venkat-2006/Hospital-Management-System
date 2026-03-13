@@ -2,48 +2,35 @@ const express = require("express");
 const router = express.Router();
 
 const dashboardController = require("../controllers/dashboardController");
-
 const verifyToken = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
 
-/*
-Admin dashboard
-*/
 router.get(
   "/admin",
   verifyToken,
   authorizeRoles("ADMIN"),
-  dashboardController.getAdminStats
+  dashboardController.getAdminDashboard
 );
 
-/*
-Doctor dashboard
-*/
 router.get(
   "/doctor",
   verifyToken,
   authorizeRoles("DOCTOR"),
-  dashboardController.getDoctorStats
+  dashboardController.getDoctorDashboard
 );
 
-/*
-Receptionist dashboard
-*/
 router.get(
   "/reception",
   verifyToken,
   authorizeRoles("RECEPTIONIST"),
-  dashboardController.getReceptionStats
+  dashboardController.getReceptionDashboard
 );
 
-/*
-Lab technician dashboard
-*/
 router.get(
   "/lab",
   verifyToken,
   authorizeRoles("LAB_TECH"),
-  dashboardController.getLabStats
+  dashboardController.getLabDashboard
 );
 
 module.exports = router;

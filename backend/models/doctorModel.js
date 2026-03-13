@@ -61,6 +61,34 @@ const getPatientFullData = async (doctorId, patientId) => {
   };
 };
 
+const updateAppointmentStatus = async (appointmentId, doctorId, status) => {
+  // Update appointments table
+  const result = await pool.query(
+    `UPDATE appointments
+     SET status = $1
+     WHERE id = $2 AND doctor_id = $3
+     RETURNING *`,
+    [status, appointmentId, doctorId]
+  );
+
+  if (result.rows.length === 0) return null;
+
+  const appointment = result.rows[0];
+
+  // Also update appointment_requests table via request_id
+  if (appointment.request_id) {
+    await pool.query(
+      `UPDATE appointment_requests
+       SET status = $1
+       WHERE id = $2`,
+      [status, appointment.request_id]
+    );
+  }
+
+  return appointment;
+};
+
+// Also fix getDoctorAppointments to only show scheduled, ordered by time
 const getDoctorAppointments = async (doctorId) => {
   const result = await pool.query(
     `SELECT
@@ -70,7 +98,8 @@ const getDoctorAppointments = async (doctorId) => {
      FROM appointments a
      JOIN patients p ON a.patient_id = p.id
      WHERE a.doctor_id = $1
-     ORDER BY a.appointment_time DESC`,
+     AND a.status = 'scheduled'
+     ORDER BY a.appointment_time ASC`,
     [doctorId]
   );
   return result.rows;
@@ -80,5 +109,7 @@ module.exports = {
   getDoctors,
   getDoctorPatients,
   getPatientFullData,
-  getDoctorAppointments
+  getDoctorAppointments,
+  updateAppointmentStatus 
 };
+
