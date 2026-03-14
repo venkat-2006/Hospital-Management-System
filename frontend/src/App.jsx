@@ -1,28 +1,58 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./router/ProtectedRoute";
 
-import LoginPage from "./pages/LoginPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import DoctorDashboard from "./pages/DoctorDashboard";
-import ReceptionDashboard from "./pages/ReceptionDashboard";
-import PharmacyPanel from "./pages/PharmacyPanel";
-import LabPanel from "./pages/LabPanel";
-import PatientFormPage from "./pages/PatientFormPage";
+// UI/UX designs here
+import Login from "./pages/Login";
+import AdminDashboard from "./pages/admin/Dashboard";
+import DoctorDashboard from "./pages/doctor/Dashboard";
+import PatientDashboard from "./pages/patient/Dashboard";
+import ReceptionDashboard from "./pages/receptionist/Dashboard";
+import LabDashboard from "./pages/lab/Dashboard";
+import Unauthorized from "./pages/Unauthorized";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/doctor" element={<DoctorDashboard />} />
-        <Route path="/reception" element={<ReceptionDashboard />} />
-        <Route path="/pharmacy" element={<PharmacyPanel />} />
-        <Route path="/lab" element={<LabPanel />} />
-        <Route path="/patient-form" element={<PatientFormPage />} />
+          <Route path="/admin/*" element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
 
-      </Routes>
-    </BrowserRouter>
+          <Route path="/doctor/*" element={
+            <ProtectedRoute allowedRoles={["DOCTOR"]}>
+              <DoctorDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/patient/*" element={
+            <ProtectedRoute allowedRoles={["PATIENT"]}>
+              <PatientDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/receptionist/*" element={
+            <ProtectedRoute allowedRoles={["RECEPTIONIST"]}>
+              <ReceptionDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/lab/*" element={
+            <ProtectedRoute allowedRoles={["LAB_TECH"]}>
+              <LabDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/" element={<Navigate to="/login" />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
