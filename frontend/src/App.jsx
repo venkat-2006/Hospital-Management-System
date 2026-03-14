@@ -1,55 +1,128 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./router/ProtectedRoute";
+import Layout from "./components/Layout";
 
-// UI/UX designs here
+// Auth
 import Login from "./pages/Login";
-import AdminDashboard from "./pages/admin/Dashboard";
-import DoctorDashboard from "./pages/doctor/Dashboard";
-import PatientDashboard from "./pages/patient/Dashboard";
-import ReceptionDashboard from "./pages/receptionist/Dashboard";
-import LabDashboard from "./pages/lab/Dashboard";
+import Register from "./pages/Register";
 import Unauthorized from "./pages/Unauthorized";
+
+// Admin
+import AdminDashboard from "./pages/admin/Dashboard";
+import ManageUsers from "./pages/admin/ManageUsers";
+import ManageDoctors from "./pages/admin/ManageDoctors";
+import Medicines from "./pages/admin/Medicines";
+import AdminBills from "./pages/admin/bills";
+
+// Doctor
+import DoctorDashboard from "./pages/doctor/Dashboard";
+import DoctorAppointments from "./pages/doctor/MyAppointments";
+import MyPatients from "./pages/doctor/MyPatients";
+import PatientDetail from "./pages/doctor/PatientDetail";
+import CreateRecord from "./pages/doctor/CreateRecord";
+import CreatePrescription from "./pages/doctor/CreatePrescription";
+import RequestLabTest from "./pages/doctor/RequestLabTest";
+
+// Patient
+import PatientDashboard from "./pages/patient/Dashboard";
+import PatientAppointments from "./pages/patient/MyAppointments";
+import RequestAppointment from "./pages/patient/RequestAppointment";
+import MyRecords from "./pages/patient/MyRecords";
+import MyPrescriptions from "./pages/patient/MyPrescriptions";
+import MyLabReports from "./pages/patient/MyLabReports";
+import MyBills from "./pages/patient/MyBills";
+
+// Receptionist
+import ReceptionDashboard from "./pages/receptionist/Dashboard";
+import Requests from "./pages/receptionist/Requests";
+import Schedule from "./pages/receptionist/Schedule";
+import ReceptionistBills from "./pages/receptionist/Bills";
+
+// Lab
+import LabDashboard from "./pages/lab/Dashboard";
+import PendingTests from "./pages/lab/PendingTests";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+
+          {/* Public routes */}
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
-          <Route path="/admin/*" element={
+          {/* Admin routes */}
+          <Route path="/admin" element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <AdminDashboard />
+              <Layout />
             </ProtectedRoute>
-          } />
+          }>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<ManageUsers />} />
+            <Route path="doctors" element={<ManageDoctors />} />
+            <Route path="medicines" element={<Medicines />} />
+            <Route path="bills" element={<AdminBills />} />
+          </Route>
 
-          <Route path="/doctor/*" element={
+          {/* Doctor routes */}
+          <Route path="/doctor" element={
             <ProtectedRoute allowedRoles={["DOCTOR"]}>
-              <DoctorDashboard />
+              <Layout />
             </ProtectedRoute>
-          } />
+          }>
+            <Route index element={<DoctorDashboard />} />
+            <Route path="appointments" element={<DoctorAppointments />} />
+            <Route path="patients" element={<MyPatients />} />
+            <Route path="patients/:patientId" element={<PatientDetail />} />
+            <Route path="create-record" element={<CreateRecord />} />
+            <Route path="create-prescription" element={<CreatePrescription />} />
+            <Route path="request-lab" element={<RequestLabTest />} />
+          </Route>
 
-          <Route path="/patient/*" element={
+          {/* Patient routes */}
+          <Route path="/patient" element={
             <ProtectedRoute allowedRoles={["PATIENT"]}>
-              <PatientDashboard />
+              <Layout />
             </ProtectedRoute>
-          } />
+          }>
+            <Route index element={<PatientDashboard />} />
+            <Route path="appointments" element={<PatientAppointments />} />
+            <Route path="request" element={<RequestAppointment />} />
+            <Route path="records" element={<MyRecords />} />
+            <Route path="prescriptions" element={<MyPrescriptions />} />
+            <Route path="lab-reports" element={<MyLabReports />} />
+            <Route path="bills" element={<MyBills />} />
+          </Route>
 
-          <Route path="/receptionist/*" element={
+          {/* Receptionist routes */}
+          <Route path="/receptionist" element={
             <ProtectedRoute allowedRoles={["RECEPTIONIST"]}>
-              <ReceptionDashboard />
+              <Layout />
             </ProtectedRoute>
-          } />
+          }>
+            <Route index element={<ReceptionDashboard />} />
+            <Route path="requests" element={<Requests />} />
+            <Route path="schedule" element={<Schedule />} />
+            <Route path="bills" element={<ReceptionistBills />} />
+          </Route>
 
-          <Route path="/lab/*" element={
+          {/* Lab routes */}
+          <Route path="/lab" element={
             <ProtectedRoute allowedRoles={["LAB_TECH"]}>
-              <LabDashboard />
+              <Layout />
             </ProtectedRoute>
-          } />
+          }>
+            <Route index element={<LabDashboard />} />
+            <Route path="pending" element={<PendingTests />} />
+          </Route>
 
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>
