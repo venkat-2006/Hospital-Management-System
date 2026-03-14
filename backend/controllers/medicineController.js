@@ -18,7 +18,16 @@ const getMedicines = async (req, res) => {
   }
 };
 
-module.exports = {
-  createMedicine,
-  getMedicines
+const updateStock = async (req, res) => {
+  try {
+    const medicine = await medicineModel.updateStock(req.params.id, req.body.stock);
+    if (!medicine) {
+      return res.status(404).json({ message: "Medicine not found" });
+    }
+    res.json({ message: "Stock updated", medicine });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating stock" });
+  }
 };
+
+module.exports = { createMedicine, getMedicines, updateStock };
