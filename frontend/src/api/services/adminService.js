@@ -43,3 +43,4 @@ export const getAdminDashboard = () => API.get("/dashboard/admin");
 
 // prescriptions
 export const getPrescriptionsByPatient = (patientId) => API.get(`/prescriptions/${patientId}`);
+//

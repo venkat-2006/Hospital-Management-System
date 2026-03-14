@@ -8,11 +8,7 @@ const createBill = async (req, res) => {
       return res.status(400).json({ message: "patient_id and amount are required" });
     }
 
-    const bill = await billModel.createBill({
-      patient_id,
-      total_amount: amount
-    });
-
+    const bill = await billModel.createBill({ patient_id, total_amount: amount });
     res.json(bill);
 
   } catch (error) {
@@ -30,7 +26,13 @@ const getBillsByPatient = async (req, res) => {
   }
 };
 
-module.exports = {
-  createBill,
-  getBillsByPatient
+const getAllBills = async (req, res) => {
+  try {
+    const bills = await billModel.getAllBills();
+    res.json(bills);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching all bills" });
+  }
 };
+
+module.exports = { createBill, getBillsByPatient, getAllBills };
