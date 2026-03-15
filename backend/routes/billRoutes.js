@@ -1,32 +1,32 @@
-const express = require("express");
-const router = express.Router();
-
+const express        = require("express");
+const router         = express.Router();
 const billController = require("../controllers/billController");
-const verifyToken = require("../middleware/authMiddleware");
+const verifyToken    = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
 
-// receptionist/admin create bill
 router.post(
   "/",
-  verifyToken,
-  authorizeRoles("RECEPTIONIST", "ADMIN"),
+  verifyToken, authorizeRoles("RECEPTIONIST", "ADMIN"),
   billController.createBill
 );
 
-// admin/receptionist see all bills
 router.get(
   "/",
-  verifyToken,
-  authorizeRoles("ADMIN", "RECEPTIONIST"),
+  verifyToken, authorizeRoles("ADMIN", "RECEPTIONIST"),
   billController.getAllBills
 );
 
-// patient/admin see bills by patient
+// /patient/:patientId must be BEFORE /:billId
 router.get(
   "/patient/:patientId",
-  verifyToken,
-  authorizeRoles("PATIENT", "ADMIN", "RECEPTIONIST"),
+  verifyToken, authorizeRoles("PATIENT", "ADMIN", "RECEPTIONIST"),
   billController.getBillsByPatient
+);
+
+router.patch(
+  "/:billId",
+  verifyToken, authorizeRoles("ADMIN", "RECEPTIONIST"),
+  billController.updateBillStatus
 );
 
 module.exports = router;

@@ -1,28 +1,30 @@
-const express = require("express");
-const router = express.Router();
-
+const express           = require("express");
+const router            = express.Router();
 const paymentController = require("../controllers/paymentController");
+const verifyToken       = require("../middleware/authMiddleware");
+const authorizeRoles    = require("../middleware/roleMiddleware");
 
-const verifyToken = require("../middleware/authMiddleware");
-const authorizeRoles = require("../middleware/roleMiddleware");
-
-/*
-Patient pays bill
-*/
+// Process payment — receptionist/admin only
 router.post(
   "/",
   verifyToken,
-  authorizeRoles("PATIENT","ADMIN"),
+  authorizeRoles("RECEPTIONIST", "ADMIN"),
   paymentController.createPayment
 );
 
-/*
-View payments for bill
-*/
+// Get receipt by payment id — must be BEFORE /bill/:billId
+router.get(
+  "/:paymentId/receipt",
+  verifyToken,
+  authorizeRoles("ADMIN", "RECEPTIONIST", "PATIENT"),
+  paymentController.getReceipt
+);
+
+// View payments for a bill
 router.get(
   "/bill/:billId",
   verifyToken,
-  authorizeRoles("ADMIN","PATIENT","RECEPTIONIST"),
+  authorizeRoles("ADMIN", "RECEPTIONIST", "PATIENT"),
   paymentController.getPaymentsByBill
 );
 
