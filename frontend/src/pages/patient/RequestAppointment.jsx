@@ -1,70 +1,108 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createRequest } from "../../api/services/patientService";
-import { getDoctors } from "../../api/services/adminService";
-import { PageWrapper, Card, ErrorMsg, SuccessMsg, Btn, Select, Textarea } from "../../components/UI";
+import { PageWrapper, Card, Btn, ErrorMsg, SuccessMsg, Input, Textarea } from "../../components/UI";
 
 const RequestAppointment = () => {
-  const [doctors, setDoctors] = useState([]);
-  const [formData, setFormData] = useState({ doctor_id: "", reason: "" });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
-  useEffect(() => {
-    getDoctors()
-      .then((res) => setDoctors(res.data))
-      .catch(() => setError("Failed to load doctors"));
-  }, []);
+  const [form,setForm] = useState({
+    department:"",
+    preferred_date:"",
+    reason:""
+  });
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [loading,setLoading] = useState(false);
+  const [error,setError] = useState("");
+  const [success,setSuccess] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true); setError(""); setSuccess("");
-    try {
-      await createRequest(formData);
-      setSuccess("Appointment request submitted! The receptionist will confirm a time shortly.");
-      setFormData({ doctor_id: "", reason: "" });
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to submit request");
-    } finally {
-      setLoading(false);
-    }
+  const handleChange = (e) => {
+
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+
   };
 
-  return (
-    <PageWrapper title="Book an Appointment">
+  const submit = async(e)=>{
+
+    e.preventDefault();
+
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try{
+
+      await createRequest(form);
+
+      setSuccess("Appointment request sent successfully");
+
+      setForm({
+        department:"",
+        preferred_date:"",
+        reason:""
+      });
+
+    }catch(err){
+
+      setError(err.response?.data?.message || "Failed");
+
+    }
+
+    setLoading(false);
+
+  };
+
+  return(
+
+    <PageWrapper title="Book Appointment">
+
       <Card className="max-w-xl">
-        {error && <ErrorMsg message={error} />}
-        {success && <SuccessMsg message={success} />}
-        <p className="text-slate-500 text-sm mb-5">
-          Select a doctor and provide a reason. Our receptionist will schedule a confirmed time for you.
-        </p>
-        <form onSubmit={handleSubmit}>
-          <Select label="Select Doctor" name="doctor_id" value={formData.doctor_id} onChange={handleChange} required>
-            <option value="">Choose a doctor</option>
-            {doctors.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}{d.specialization ? ` — ${d.specialization}` : ""}
-              </option>
-            ))}
-          </Select>
-          <Textarea
-            label="Reason for Visit"
-            name="reason"
-            value={formData.reason}
+
+        {error && <ErrorMsg message={error}/>}
+        {success && <SuccessMsg message={success}/>}
+
+        <form onSubmit={submit} className="space-y-4">
+
+          <Input
+            label="Department"
+            name="department"
+            value={form.department}
             onChange={handleChange}
-            placeholder="Briefly describe your symptoms or reason..."
-            rows={4}
+            placeholder="Cardiology / Orthopedics / General"
             required
           />
+
+          <Input
+            type="date"
+            label="Preferred Date"
+            name="preferred_date"
+            value={form.preferred_date}
+            onChange={handleChange}
+            required
+          />
+
+          <Textarea
+            label="Reason"
+            name="reason"
+            value={form.reason}
+            onChange={handleChange}
+            rows={4}
+            placeholder="Describe symptoms"
+          />
+
           <Btn type="submit" disabled={loading}>
             {loading ? "Submitting..." : "Submit Request"}
           </Btn>
+
         </form>
+
       </Card>
+
     </PageWrapper>
+
   );
+
 };
 
 export default RequestAppointment;

@@ -1,97 +1,166 @@
 import { useState, useEffect } from "react";
 import { getRequests, createAppointment } from "../../api/services/receptionistService";
-import { PageWrapper, Card, ErrorMsg, SuccessMsg, Btn, Select } from "../../components/UI";
+import { getDoctors } from "../../api/services/adminService";
+import { PageWrapper, Card, Select, Btn, ErrorMsg, SuccessMsg } from "../../components/UI";
 
 const Schedule = () => {
-  const [requests, setRequests] = useState([]);
-  const [formData, setFormData] = useState({
-    request_id: "", patient_id: "", doctor_id: "", appointment_time: "",
+
+  const [requests,setRequests] = useState([]);
+  const [doctors,setDoctors] = useState([]);
+
+  const [form,setForm] = useState({
+    request_id:"",
+    patient_id:"",
+    doctor_id:"",
+    appointment_time:""
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
-  useEffect(() => {
+  const [error,setError] = useState("");
+  const [success,setSuccess] = useState("");
+  const [loading,setLoading] = useState(false);
+
+  useEffect(()=>{
+
     getRequests()
-      .then((res) => setRequests(res.data.filter((r) => r.status !== "scheduled")))
-      .catch(() => setError("Failed to load requests"));
-  }, []);
+      .then(res => setRequests(res.data.filter(r => r.status !== "scheduled")));
 
-  const handleRequestSelect = (e) => {
+    getDoctors()
+      .then(res => setDoctors(res.data));
+
+  },[]);
+
+  const selectRequest = (e)=>{
+
     const id = parseInt(e.target.value);
-    const selected = requests.find((r) => r.id === id);
-    if (selected) {
-      setFormData({
-        ...formData,
-        request_id: selected.id,
-        patient_id: selected.patient_id,
-        doctor_id: selected.doctor_id,
+    const r = requests.find(x => x.id === id);
+
+    if(r){
+
+      setForm({
+        ...form,
+        request_id:r.id,
+        patient_id:r.patient_id
       });
+
     }
+
   };
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const change = (e)=>{
 
-  const handleSubmit = async (e) => {
+    setForm({
+      ...form,
+      [e.target.name]:e.target.value
+    });
+
+  };
+
+  const submit = async(e)=>{
+
     e.preventDefault();
-    setLoading(true); setError(""); setSuccess("");
-    try {
-      await createAppointment(formData);
-      setSuccess("Appointment scheduled successfully! Patient and doctor have been notified.");
-      setFormData({ request_id: "", patient_id: "", doctor_id: "", appointment_time: "" });
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to schedule appointment");
-    } finally {
-      setLoading(false);
+
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try{
+
+      await createAppointment(form);
+
+      setSuccess("Appointment scheduled");
+
+      setForm({
+        request_id:"",
+        patient_id:"",
+        doctor_id:"",
+        appointment_time:""
+      });
+
+    }catch(err){
+
+      setError(err.response?.data?.message || "Failed");
+
     }
+
+    setLoading(false);
+
   };
 
-  const selectedRequest = requests.find((r) => r.id === parseInt(formData.request_id));
+  return(
 
-  return (
     <PageWrapper title="Schedule Appointment">
-      <Card className="max-w-xl">
-        {error && <ErrorMsg message={error} />}
-        {success && <SuccessMsg message={success} />}
 
-        <form onSubmit={handleSubmit}>
-          <Select label="Select Request" onChange={handleRequestSelect} value={formData.request_id} required>
-            <option value="">Choose a pending request</option>
-            {requests.map((r) => (
+      <Card className="max-w-xl">
+
+        {error && <ErrorMsg message={error}/>}
+        {success && <SuccessMsg message={success}/>}
+
+        <form onSubmit={submit}>
+
+          <Select
+            label="Select Request"
+            value={form.request_id}
+            onChange={selectRequest}
+            required
+          >
+
+            <option value="">Choose Request</option>
+
+            {requests.map(r=>(
               <option key={r.id} value={r.id}>
-                #{r.id} — {r.patient_name || `Patient #${r.patient_id}`} → {r.doctor_name || `Dr. #${r.doctor_id}`}
+                #{r.id} — Patient {r.patient_id} ({r.department})
               </option>
             ))}
+
           </Select>
 
-          {selectedRequest && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 mb-4 text-sm text-blue-700">
-              <span className="font-semibold">Reason:</span> {selectedRequest.reason || "Not specified"}
-            </div>
-          )}
+          <Select
+            label="Assign Doctor"
+            name="doctor_id"
+            value={form.doctor_id}
+            onChange={change}
+            required
+          >
+
+            <option value="">Select Doctor</option>
+
+            {doctors.map(d=>(
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+
+          </Select>
 
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-              Appointment Date & Time
+
+            <label className="block text-sm font-semibold mb-1">
+              Appointment Time
             </label>
+
             <input
-              name="appointment_time"
               type="datetime-local"
-              value={formData.appointment_time}
-              onChange={handleChange}
+              name="appointment_time"
+              value={form.appointment_time}
+              onChange={change}
               required
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm outline-none
-                focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+              className="border p-2 w-full rounded"
             />
+
           </div>
 
-          <Btn type="submit" disabled={loading || !formData.request_id}>
+          <Btn type="submit" disabled={loading}>
             {loading ? "Scheduling..." : "Confirm Appointment"}
           </Btn>
+
         </form>
+
       </Card>
+
     </PageWrapper>
+
   );
+
 };
 
 export default Schedule;

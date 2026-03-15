@@ -1,46 +1,47 @@
 import API from "../axios";
 
-// users
+/* USERS */
 export const getUsers = () => API.get("/users");
 export const createUser = (data) => API.post("/users", data);
 export const deleteUser = (id) => API.delete(`/users/${id}`);
 
-// doctors
+/* DOCTORS */
 export const getDoctors = () => API.get("/doctor");
 
-// patients
+/* PATIENTS */
 export const getPatients = () => API.get("/patients");
-export const createPatient = (data) => API.post("/patients", data);
 
-// appointments
+/* APPOINTMENTS */
 export const getAppointments = () => API.get("/appointments");
-export const createAppointment = (data) => API.post("/appointments", data);
 
-// bills
-export const createBill = (data) => API.post("/bills", data);
-export const getBillsByPatient = (patientId) => API.get(`/bills/patient/${patientId}`);
+/* BILLS */
 export const getAllBills = () => API.get("/bills");
+export const createBill = (data) => API.post("/bills", data);
+export const getBillsByPatient = (patientId) =>
+  API.get(`/bills/patient/${patientId}`);
 
-// payments
-export const getPaymentsByBill = (billId) => API.get(`/payments/bill/${billId}`);
+/* PAYMENTS */
+export const getPaymentsByBill = (billId) =>
+  API.get(`/payments/bill/${billId}`);
 
-// requests
-export const getRequests = () => API.get("/requests");
-
-// medicines
+/* MEDICINES */
 export const getMedicines = () => API.get("/medicines");
 export const createMedicine = (data) => API.post("/medicines", data);
-export const updateMedicineStock = (id, stock) => API.patch(`/medicines/${id}/stock`, { stock });
+export const updateMedicineStock = (id, stock) =>
+  API.patch(`/medicines/${id}/stock`, { stock });
 
-// medical records
-export const getRecordsByPatient = (patientId) => API.get(`/medical-records/${patientId}`);
+/* DASHBOARD */
+export const getAdminDashboard = () =>
+  API.get("/dashboard/admin");
 
-// lab reports
-export const getLabReportsByPatient = (patientId) => API.get(`/lab-reports/patient/${patientId}`);
+/* LAB REPORTS */
+export const getLabReportsByPatient = (patientId) =>
+  API.get(`/lab-reports/patient/${patientId}`);
 
-// dashboard
-export const getAdminDashboard = () => API.get("/dashboard/admin");
+/* MEDICAL RECORDS */
+export const getRecordsByPatient = (patientId) =>
+  API.get(`/medical-records/${patientId}`);
 
-// prescriptions
-export const getPrescriptionsByPatient = (patientId) => API.get(`/prescriptions/${patientId}`);
-//
+/* PRESCRIPTIONS */
+export const getPrescriptionsByPatient = (patientId) =>
+  API.get(`/prescriptions/${patientId}`);

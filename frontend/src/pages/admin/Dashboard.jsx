@@ -1,43 +1,50 @@
 import { useState, useEffect } from "react";
 import { getAdminDashboard } from "../../api/services/adminService";
 import { useAuth } from "../../context/AuthContext";
-import { PageWrapper, Card, LoadingSpinner, ErrorMsg, StatCard } from "../../components/UI";
+import { PageWrapper, LoadingSpinner, ErrorMsg, StatCard } from "../../components/UI";
 
 const AdminDashboard = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
   const { user } = useAuth();
 
-  useEffect(() => {
+  const [stats,setStats] = useState(null);
+  const [loading,setLoading] = useState(true);
+  const [error,setError] = useState("");
+
+  useEffect(()=>{
+
     getAdminDashboard()
-      .then((res) => setData(res.data))
-      .catch(() => setError("Failed to load dashboard data"))
-      .finally(() => setLoading(false));
-  }, []);
+      .then(res => setStats(res.data))
+      .catch(()=>setError("Failed to load dashboard"))
+      .finally(()=>setLoading(false));
 
-  if (loading) return <PageWrapper><LoadingSpinner /></PageWrapper>;
-  if (error) return <PageWrapper><ErrorMsg message={error} /></PageWrapper>;
+  },[]);
 
-  return (
-    <PageWrapper title={`Welcome back, ${user?.name} 👋`}>
-      <div className="grid grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
-        <StatCard label="Total Doctors" value={data?.total_doctors} color="blue" icon="👨‍⚕️" />
-        <StatCard label="Total Patients" value={data?.total_patients} color="green" icon="🧑‍🤝‍🧑" />
-        <StatCard label="Appointments Today" value={data?.appointments_today} color="orange" icon="📅" />
-        <StatCard label="Pending Bills" value={data?.pending_bills} color="red" icon="💳" />
-        <StatCard label="Medicines" value={data?.total_medicines} color="purple" icon="💊" />
-        <StatCard label="Lab Tests Pending" value={data?.pending_lab_tests} color="teal" icon="🔬" />
+  if(loading) return <LoadingSpinner/>;
+
+  return(
+
+    <PageWrapper>
+
+      <h2 className="text-xl font-bold mb-6">
+        Welcome, {user?.name}
+      </h2>
+
+      <ErrorMsg message={error}/>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <StatCard label="Total Patients" value={stats?.total_patients ?? 0} icon="👥"/>
+        <StatCard label="Total Doctors" value={stats?.total_doctors ?? 0} icon="👨‍⚕️"/>
+        <StatCard label="Appointments" value={stats?.total_appointments ?? 0} icon="📅"/>
+        <StatCard label="Pending Bills" value={stats?.pending_bills ?? 0} icon="🧾"/>
+
       </div>
 
-      <Card>
-        <h3 className="font-semibold text-slate-800 mb-2">System Overview</h3>
-        <p className="text-slate-500 text-sm">
-          All systems operational. Use the sidebar to manage users, doctors, medicines and view reports.
-        </p>
-      </Card>
     </PageWrapper>
+
   );
+
 };
 
 export default AdminDashboard;

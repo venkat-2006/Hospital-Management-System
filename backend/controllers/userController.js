@@ -14,11 +14,11 @@ const createUser = async (req, res) => {
     const user = await userModel.createUser(name, email, hashedPassword, role);
 
     if (role === "DOCTOR") {
-      await pool.query(
-        "INSERT INTO doctors(name, specialization, experience, phone) VALUES($1, $2, $3, $4)",
-        [user.name, specialization, experience, phone] //  insert all doctor fields
-      );
-    }
+  await pool.query(
+    "INSERT INTO doctors(user_id, name, specialization, experience, phone) VALUES($1, $2, $3, $4, $5)",
+    [user.id, user.name, specialization, experience, phone]
+  );
+}
     delete user.password;
 
     res.json({ message: "User created successfully", user });

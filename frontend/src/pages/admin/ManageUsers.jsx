@@ -1,118 +1,129 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getUsers, createUser, deleteUser } from "../../api/services/adminService";
-import { PageWrapper, Card, LoadingSpinner, ErrorMsg, SuccessMsg, Table, Tr, Td, Btn, Input, Select, Badge } from "../../components/UI";
+import { Card, TableSkeleton, ErrorMsg, Toast, Table, Tr, Td, Btn, Input, Select, Badge } from "../../components/UI";
 
-const roleColor = {
-  ADMIN: "#c0392b", DOCTOR: "#2980b9", PATIENT: "#27ae60",
-  RECEPTIONIST: "#8e44ad", LAB_TECH: "#e67e22",
-};
+const ROLES = ["DOCTOR", "RECEPTIONIST", "LAB_TECH"];
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [deletingId, setDeletingId] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", password: "", role: "DOCTOR" });
-  const [formLoading, setFormLoading] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "", email: "", password: "", role: "DOCTOR",
+    specialization: "", experience: "", phone: ""
+  });
+  const [errors, setErrors] = useState({});
 
-  const fetchUsers = () => {
-    setLoading(true);
-    getUsers()
-      .then((res) => setUsers(res.data))
-      .catch(() => setError("Failed to load users"))
-      .finally(() => setLoading(false));
+  const fetchUsers = useCallback(async () => {
+    try {
+      const res = await getUsers();
+      setUsers(res.data);
+    } catch {
+      setToast({ message: "Failed to load users", type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+
+  const validate = () => {
+    const e = {};
+    if (!formData.name) e.name = "Required";
+    if (!formData.email) e.email = "Required";
+    if (!formData.password) e.password = "Required";
+    if (formData.role === "DOCTOR" && !formData.specialization) e.specialization = "Required";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
-
-  useEffect(() => { fetchUsers(); }, []);
-
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    setFormLoading(true); setError(""); setSuccess("");
+    if (!validate()) return;
     try {
       await createUser(formData);
-      setSuccess("User created successfully!");
-      setFormData({ name: "", email: "", password: "", role: "DOCTOR" });
-      setShowForm(false);
+      setToast({ message: "User created successfully!", type: "success" });
+      setFormData({ name: "", email: "", password: "", role: "DOCTOR", specialization: "", experience: "", phone: "" });
       fetchUsers();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create user");
-    } finally {
-      setFormLoading(false);
+      setToast({ message: err.response?.data?.message || "Failed to create user", type: "error" });
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this user? This cannot be undone.")) return;
-    setDeletingId(id);
+    if (!window.confirm("Delete this user?")) return;
     try {
       await deleteUser(id);
-      setUsers(users.filter((u) => u.id !== id));
-      setSuccess("User deleted.");
+      setUsers(users.filter(u => u.id !== id));
+      setToast({ message: "User deleted", type: "success" });
     } catch {
-      setError("Failed to delete user");
-    } finally {
-      setDeletingId(null);
+      setToast({ message: "Failed to delete", type: "error" });
     }
   };
 
   return (
-    <PageWrapper title="Manage Users">
-      {error && <ErrorMsg message={error} />}
-      {success && <SuccessMsg message={success} />}
+    <div>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="mb-4">
-        <Btn onClick={() => setShowForm(!showForm)}>
-          {showForm ? "Cancel" : "+ Add New User"}
-        </Btn>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-800">Manage Users</h1>
+        <p className="text-slate-500 text-sm mt-1">Create and manage staff accounts</p>
       </div>
 
-      {showForm && (
-        <Card className="mb-4">
-          <h3 className="font-semibold text-slate-800 mb-4">Create New User</h3>
-          <form onSubmit={handleCreate}>
-            <div className="grid grid-cols-2 gap-x-4">
-              <Input label="Full Name" name="name" value={formData.name} onChange={handleChange} placeholder="Dr. John Doe" required />
-              <Input label="Email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="email@hospital.com" required />
-              <Input label="Password" name="password" type="password" value={formData.password} onChange={handleChange} placeholder="Min 6 chars" required />
-              <Select label="Role" name="role" value={formData.role} onChange={handleChange}>
-                <option value="ADMIN">Admin</option>
-                <option value="DOCTOR">Doctor</option>
-                <option value="RECEPTIONIST">Receptionist</option>
-                <option value="LAB_TECH">Lab Tech</option>
-              </Select>
-            </div>
-            <Btn type="submit" disabled={formLoading}>{formLoading ? "Creating..." : "Create User"}</Btn>
-          </form>
-        </Card>
-      )}
+      <Card className="mb-6">
+        <h2 className="font-semibold text-slate-800 mb-5">Create New User</h2>
+        <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input label="Full Name" name="name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} error={errors.name} required />
+          <Input label="Email" name="email" type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} error={errors.email} required />
+          <Input label="Password" name="password" type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} error={errors.password} required />
+          <Select label="Role" name="role" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
+            {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+          </Select>
+          {formData.role === "DOCTOR" && (
+            <>
+              <Input label="Specialization" name="specialization" value={formData.specialization} onChange={e => setFormData({...formData, specialization: e.target.value})} error={errors.specialization} required />
+              <Input label="Experience (years)" name="experience" type="number" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} />
+              <Input label="Phone" name="phone" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+            </>
+          )}
+          <div className="sm:col-span-2 flex justify-end">
+            <Btn type="submit">Create User</Btn>
+          </div>
+        </form>
+      </Card>
 
       <Card>
-        {loading ? <LoadingSpinner /> : (
-          <Table headers={["Name", "Email", "Role", "Actions"]}>
-            {users.map((u) => (
-              <Tr key={u.id}>
-                <Td><span className="font-medium">{u.name}</span></Td>
-                <Td>{u.email}</Td>
-                <Td><Badge label={u.role} color={roleColor[u.role] || "#64748b"} /></Td>
-                <Td>
-                  <Btn variant="danger" onClick={() => handleDelete(u.id)}
-                    disabled={deletingId === u.id} className="text-xs px-3 py-1.5">
-                    {deletingId === u.id ? "Deleting..." : "Delete"}
-                  </Btn>
-                </Td>
+        <h2 className="font-semibold text-slate-800 mb-5">All Users ({users.length})</h2>
+        {loading ? <TableSkeleton /> : (
+          <Table>
+            <thead>
+              <Tr header>
+                <Td header>ID</Td>
+                <Td header>Name</Td>
+                <Td header>Email</Td>
+                <Td header>Role</Td>
+                <Td header>Created</Td>
+                <Td header>Action</Td>
               </Tr>
-            ))}
+            </thead>
+            <tbody>
+              {users.map(u => (
+                <Tr key={u.id}>
+                  <Td><span className="text-slate-400">#{u.id}</span></Td>
+                  <Td><span className="font-medium text-slate-800">{u.name}</span></Td>
+                  <Td>{u.email}</Td>
+                  <Td><Badge value={u.role} /></Td>
+                  <Td>{new Date(u.created_at).toLocaleDateString()}</Td>
+                  <Td>
+                    <Btn variant="danger" onClick={() => handleDelete(u.id)}>Delete</Btn>
+                  </Td>
+                </Tr>
+              ))}
+            </tbody>
           </Table>
         )}
-        {!loading && users.length === 0 && (
-          <p className="text-slate-500 text-center py-6">No users found.</p>
-        )}
       </Card>
-    </PageWrapper>
+    </div>
   );
 };
 

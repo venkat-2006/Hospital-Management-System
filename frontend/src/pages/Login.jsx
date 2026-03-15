@@ -1,100 +1,82 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../api/services/authService";
+import { useAuth } from "../context/AuthContext";
 
-const roleRoutes = {
-  ADMIN: "/admin",
-  DOCTOR: "/doctor",
-  PATIENT: "/patient",
-  RECEPTIONIST: "/receptionist",
-  LAB_TECH: "/lab",
-};
+export default function Login() {
 
-const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const { login } = useAuth();
-  const navigate = useNavigate();
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [form, setForm] = useState({
+    email: "",
+    password: ""
+  });
+
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
-    setLoading(true);
-    setError("");
+
     try {
-      const res = await loginUser(formData);
-      login(res.data.user, res.data.token);
-      navigate(roleRoutes[res.data.user.role] || "/login");
+
+      const res = await loginUser(form);
+
+      login(res.data);
+
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please check your credentials.");
-    } finally {
-      setLoading(false);
+
+      setError(err.response?.data?.message || "Login failed");
+
     }
+
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 px-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🏥</div>
-          <h1 className="text-2xl font-bold text-slate-800">MediCare HMS</h1>
-          <p className="text-slate-500 text-sm mt-1">Hospital Management System</p>
-        </div>
 
-        {/* Error */}
+    <div className="flex justify-center items-center h-screen">
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow p-8 rounded w-96"
+      >
+
+        <h2 className="text-xl mb-6 font-bold">Login</h2>
+
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm flex gap-2">
-            ⚠️ {error}
-          </div>
+          <p className="text-red-500 mb-4">{error}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-              Email Address
-            </label>
-            <input
-              name="email" type="email" value={formData.email}
-              onChange={handleChange} placeholder="you@hospital.com" required
-              className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm outline-none
-                focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-            />
-          </div>
+        <input
+          type="email"
+          placeholder="Email"
+          className="border p-2 w-full mb-3"
+          onChange={(e) =>
+            setForm({ ...form, email: e.target.value })
+          }
+        />
 
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-              Password
-            </label>
-            <input
-              name="password" type="password" value={formData.password}
-              onChange={handleChange} placeholder="••••••••" required
-              className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm outline-none
-                focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-            />
-          </div>
+        <input
+          type="password"
+          placeholder="Password"
+          className="border p-2 w-full mb-3"
+          onChange={(e) =>
+            setForm({ ...form, password: e.target.value })
+          }
+        />
 
-          <button
-            type="submit" disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400
-              text-white font-semibold rounded-xl transition-colors text-sm disabled:cursor-not-allowed"
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
+        <button
+          className="bg-blue-600 text-white w-full py-2"
+        >
+          Login
+        </button>
 
-        <p className="text-center mt-6 text-sm text-slate-500">
-          New patient?{" "}
-          <Link to="/register" className="text-blue-600 font-semibold hover:underline">
-            Register here
-          </Link>
+        <p className="mt-4 text-sm">
+          Patient? <a href="/register" className="text-blue-600">Register here</a>
         </p>
-      </div>
-    </div>
-  );
-};
 
-export default Login;
+      </form>
+
+    </div>
+
+  );
+}

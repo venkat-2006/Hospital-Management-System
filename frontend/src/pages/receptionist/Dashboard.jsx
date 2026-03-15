@@ -3,38 +3,79 @@ import { getReceptionDashboard } from "../../api/services/receptionistService";
 import { useAuth } from "../../context/AuthContext";
 import { PageWrapper, Card, LoadingSpinner, ErrorMsg, StatCard } from "../../components/UI";
 
-const ReceptionistDashboard = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+const ReceptionDashboard = () => {
+
+  const [data,setData] = useState(null);
+  const [loading,setLoading] = useState(true);
+  const [error,setError] = useState("");
+
   const { user } = useAuth();
 
-  useEffect(() => {
+  useEffect(()=>{
+
     getReceptionDashboard()
-      .then((res) => setData(res.data))
-      .catch(() => setError("Failed to load dashboard"))
-      .finally(() => setLoading(false));
-  }, []);
+      .then(res => setData(res.data))
+      .catch(()=>setError("Failed to load dashboard"))
+      .finally(()=>setLoading(false));
 
-  if (loading) return <PageWrapper><LoadingSpinner /></PageWrapper>;
-  if (error) return <PageWrapper><ErrorMsg message={error} /></PageWrapper>;
+  },[]);
 
-  return (
+  if(loading) return <PageWrapper><LoadingSpinner/></PageWrapper>;
+  if(error) return <PageWrapper><ErrorMsg message={error}/></PageWrapper>;
+
+  return(
+
     <PageWrapper title={`Reception Desk — ${user?.name}`}>
+
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Pending Requests" value={data?.pending_requests} color="orange" icon="📋" />
-        <StatCard label="Today's Appointments" value={data?.todays_appointments} color="blue" icon="📅" />
-        <StatCard label="Total Bills" value={data?.total_bills} color="green" icon="💳" />
-        <StatCard label="Unpaid Bills" value={data?.unpaid_bills} color="red" icon="⚠️" />
+
+        <StatCard
+          label="Pending Requests"
+          value={data?.pending_requests}
+          color="orange"
+          icon="📋"
+        />
+
+        <StatCard
+          label="Today's Appointments"
+          value={data?.todays_appointments}
+          color="blue"
+          icon="📅"
+        />
+
+        <StatCard
+          label="Total Bills"
+          value={data?.total_bills}
+          color="green"
+          icon="💳"
+        />
+
+        <StatCard
+          label="Unpaid Bills"
+          value={data?.unpaid_bills}
+          color="red"
+          icon="⚠️"
+        />
+
       </div>
+
       <Card>
-        <h3 className="font-semibold text-slate-800 mb-2">Your Responsibilities</h3>
-        <p className="text-slate-500 text-sm">
-          Review appointment requests, schedule confirmed appointments, generate bills, and assist patients at the front desk.
+
+        <h3 className="font-semibold mb-2">
+          Responsibilities
+        </h3>
+
+        <p className="text-sm text-slate-500">
+          Review appointment requests, schedule appointments,
+          and generate bills for patients.
         </p>
+
       </Card>
+
     </PageWrapper>
+
   );
+
 };
 
-export default ReceptionistDashboard;
+export default ReceptionDashboard;

@@ -1,114 +1,280 @@
-import { NavLink, Outlet } from "react-router-dom";
+// import { Outlet, NavLink, useNavigate } from "react-router-dom";
+// import { useAuth } from "../context/AuthContext";
+// import { useState } from "react";
+
+// const roleNavLinks = {
+//   ADMIN: [
+//     { to: "/admin", label: "Dashboard", end: true },
+//     { to: "/admin/users", label: "Users" },
+//     { to: "/admin/doctors", label: "Doctors" },
+//     { to: "/admin/medicines", label: "Medicines" },
+//     { to: "/admin/bills", label: "Bills" },
+//   ],
+//   DOCTOR: [
+//     { to: "/doctor", label: "Dashboard", end: true },
+//     { to: "/doctor/appointments", label: "Appointments" },
+//     { to: "/doctor/patients", label: "My Patients" },
+//     { to: "/doctor/create-record", label: "Add Record" },
+//     { to: "/doctor/create-prescription", label: "Prescribe" },
+//     { to: "/doctor/request-lab", label: "Lab Test" },
+//   ],
+//   PATIENT: [
+//     { to: "/patient", label: "Dashboard", end: true },
+//     { to: "/patient/request", label: "Book" },
+//     { to: "/patient/appointments", label: "Appointments" },
+//     { to: "/patient/records", label: "Records" },
+//     { to: "/patient/prescriptions", label: "Prescriptions" },
+//     { to: "/patient/lab-reports", label: "Lab Reports" },
+//     { to: "/patient/bills", label: "Bills" },
+//   ],
+//   RECEPTIONIST: [
+//     { to: "/receptionist", label: "Dashboard", end: true },
+//     { to: "/receptionist/requests", label: "Requests" },
+//     { to: "/receptionist/schedule", label: "Schedule" },
+//     { to: "/receptionist/bills", label: "Bills" },
+//   ],
+//   LAB_TECH: [
+//     { to: "/lab", label: "Dashboard", end: true },
+//     { to: "/lab/pending", label: "Pending Tests" },
+//   ],
+// };
+
+// const roleColors = {
+//   ADMIN: "bg-rose-600",
+//   DOCTOR: "bg-blue-600",
+//   PATIENT: "bg-emerald-600",
+//   RECEPTIONIST: "bg-violet-600",
+//   LAB_TECH: "bg-amber-600",
+// };
+
+// const Layout = () => {
+//   const { user, logout } = useAuth();
+//   const navigate = useNavigate();
+//   const [menuOpen, setMenuOpen] = useState(false);
+//   const links = roleNavLinks[user?.role] || [];
+//   const navColor = roleColors[user?.role] || "bg-blue-600";
+
+//   const handleLogout = () => {
+//     logout();
+//     navigate("/login");
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-slate-50">
+//       {/* Top Navbar */}
+//       <nav className={`${navColor} text-white shadow-lg`}>
+//         <div className="max-w-7xl mx-auto px-4">
+//           <div className="flex items-center justify-between h-16">
+//             {/* Logo */}
+//             <div className="flex items-center gap-3">
+//               <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-bold text-sm">
+//                 H
+//               </div>
+//               <span className="font-bold text-lg hidden sm:block">HMS</span>
+//             </div>
+
+//             {/* Desktop Nav Links */}
+//             <div className="hidden md:flex items-center gap-1">
+//               {links.map((link) => (
+//                 <NavLink
+//                   key={link.to}
+//                   to={link.to}
+//                   end={link.end}
+//                   className={({ isActive }) =>
+//                     `px-3 py-2 rounded-lg text-sm font-medium transition ${
+//                       isActive
+//                         ? "bg-white/20 text-white"
+//                         : "text-white/80 hover:bg-white/10 hover:text-white"
+//                     }`
+//                   }
+//                 >
+//                   {link.label}
+//                 </NavLink>
+//               ))}
+//             </div>
+
+//             {/* User Info + Logout */}
+//             <div className="flex items-center gap-3">
+//               <div className="hidden sm:block text-right">
+//                 <p className="text-sm font-medium">{user?.name}</p>
+//                 <p className="text-xs text-white/70">{user?.role}</p>
+//               </div>
+//               <button
+//                 onClick={handleLogout}
+//                 className="bg-white/20 hover:bg-white/30 text-white text-sm px-3 py-1.5 rounded-lg transition"
+//               >
+//                 Logout
+//               </button>
+//               {/* Mobile menu toggle */}
+//               <button
+//                 className="md:hidden bg-white/20 p-2 rounded-lg"
+//                 onClick={() => setMenuOpen(!menuOpen)}
+//               >
+//                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+//                 </svg>
+//               </button>
+//             </div>
+//           </div>
+
+//           {/* Mobile Menu */}
+//           {menuOpen && (
+//             <div className="md:hidden pb-3 flex flex-col gap-1">
+//               {links.map((link) => (
+//                 <NavLink
+//                   key={link.to}
+//                   to={link.to}
+//                   end={link.end}
+//                   onClick={() => setMenuOpen(false)}
+//                   className={({ isActive }) =>
+//                     `px-3 py-2 rounded-lg text-sm font-medium transition ${
+//                       isActive ? "bg-white/20" : "text-white/80 hover:bg-white/10"
+//                     }`
+//                   }
+//                 >
+//                   {link.label}
+//                 </NavLink>
+//               ))}
+//             </div>
+//           )}
+//         </div>
+//       </nav>
+
+//       {/* Page Content */}
+//       <main className="max-w-7xl mx-auto px-4 py-8">
+//         <Outlet />
+//       </main>
+//     </div>
+//   );
+// };
+
+// export default Layout;
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
-const navConfig = {
+const roleNavLinks = {
+
   ADMIN: [
-    { to: "/admin", label: "Dashboard", icon: "📊" },
-    { to: "/admin/users", label: "Manage Users", icon: "👥" },
-    { to: "/admin/doctors", label: "Doctors", icon: "👨‍⚕️" },
-    { to: "/admin/medicines", label: "Medicines", icon: "💊" },
-    { to: "/admin/bills", label: "Bills", icon: "💳" },
+    { to: "/admin", label: "Dashboard", end: true },
+    { to: "/admin/users", label: "Users" },
+    { to: "/admin/doctors", label: "Doctors" },
+    { to: "/admin/medicines", label: "Medicines" },
+    { to: "/admin/bills", label: "Bills" }
   ],
+
   DOCTOR: [
-    { to: "/doctor", label: "Dashboard", icon: "📊" },
-    { to: "/doctor/appointments", label: "Appointments", icon: "📅" },
-    { to: "/doctor/patients", label: "My Patients", icon: "🧑‍🤝‍🧑" },
-    { to: "/doctor/create-record", label: "Create Record", icon: "📋" },
-    { to: "/doctor/create-prescription", label: "Prescribe", icon: "💊" },
-    { to: "/doctor/request-lab", label: "Request Lab", icon: "🔬" },
+    { to: "/doctor", label: "Dashboard", end: true },
+    { to: "/doctor/appointments", label: "Appointments" },
+    { to: "/doctor/patients", label: "Patients" },
+    { to: "/doctor/create-record", label: "Create Record" },
+    { to: "/doctor/create-prescription", label: "Prescription" },
+    { to: "/doctor/request-lab", label: "Request Lab" }
   ],
+
   PATIENT: [
-    { to: "/patient", label: "Dashboard", icon: "📊" },
-    { to: "/patient/appointments", label: "Appointments", icon: "📅" },
-    { to: "/patient/request", label: "Book Appt.", icon: "➕" },
-    { to: "/patient/records", label: "My Records", icon: "📋" },
-    { to: "/patient/prescriptions", label: "Prescriptions", icon: "💊" },
-    { to: "/patient/lab-reports", label: "Lab Reports", icon: "🔬" },
-    { to: "/patient/bills", label: "My Bills", icon: "💳" },
+    { to: "/patient", label: "Dashboard", end: true },
+    { to: "/patient/request", label: "Book Appointment" },
+    { to: "/patient/appointments", label: "My Appointments" },
+    { to: "/patient/records", label: "Records" },
+    { to: "/patient/prescriptions", label: "Prescriptions" },
+    { to: "/patient/lab-reports", label: "Lab Reports" },
+    { to: "/patient/bills", label: "Bills" }
   ],
+
   RECEPTIONIST: [
-    { to: "/receptionist", label: "Dashboard", icon: "📊" },
-    { to: "/receptionist/requests", label: "Requests", icon: "📋" },
-    { to: "/receptionist/schedule", label: "Schedule", icon: "📅" },
-    { to: "/receptionist/bills", label: "Bills", icon: "💳" },
+    { to: "/receptionist", label: "Dashboard", end: true },
+    { to: "/receptionist/requests", label: "Requests" },
+    { to: "/receptionist/schedule", label: "Schedule" },
+    { to: "/receptionist/bills", label: "Bills" }
   ],
+
   LAB_TECH: [
-    { to: "/lab", label: "Dashboard", icon: "📊" },
-    { to: "/lab/pending", label: "Pending Tests", icon: "🔬" },
-  ],
-};
-
-const roleAccent = {
-  ADMIN: "from-red-700 to-red-600",
-  DOCTOR: "from-blue-700 to-blue-600",
-  PATIENT: "from-emerald-700 to-emerald-600",
-  RECEPTIONIST: "from-purple-700 to-purple-600",
-  LAB_TECH: "from-orange-600 to-orange-500",
-};
-
-const roleActiveBg = {
-  ADMIN: "bg-red-500/20 text-white border-l-red-400",
-  DOCTOR: "bg-blue-500/20 text-white border-l-blue-400",
-  PATIENT: "bg-emerald-500/20 text-white border-l-emerald-400",
-  RECEPTIONIST: "bg-purple-500/20 text-white border-l-purple-400",
-  LAB_TECH: "bg-orange-500/20 text-white border-l-orange-400",
+    { to: "/lab", label: "Dashboard", end: true },
+    { to: "/lab/pending", label: "Pending Tests" }
+  ]
 };
 
 const Layout = () => {
+
   const { user, logout } = useAuth();
-  const links = navConfig[user?.role] || [];
-  const headerGradient = roleAccent[user?.role] || "from-slate-700 to-slate-600";
-  const activeCls = roleActiveBg[user?.role] || "bg-slate-500/20 text-white border-l-slate-400";
+  const navigate = useNavigate();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const links = roleNavLinks[user?.role] || [];
+
+  const handleLogout = () => {
+
+    logout();
+    navigate("/login");
+
+  };
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      {/* Sidebar */}
-      <aside className="w-60 bg-slate-900 text-slate-300 flex flex-col fixed h-screen z-50">
-        <div className={`bg-gradient-to-r ${headerGradient} px-5 py-5`}>
-          <div className="text-lg font-bold text-white tracking-wide">🏥 MediCare</div>
-          <div className="text-xs text-white/75 mt-0.5 uppercase tracking-widest">
-            {user?.role?.replace("_", " ")}
-          </div>
-        </div>
 
-        <nav className="flex-1 py-3 overflow-y-auto">
-          {links.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to.split("/").length === 2}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-5 py-2.5 text-sm border-l-4 transition-all
-                ${isActive
-                  ? `${activeCls} font-semibold`
-                  : "border-l-transparent text-slate-400 hover:text-white hover:bg-white/5"
-                }`
-              }
+    <div className="min-h-screen bg-gray-100">
+
+      {/* NAVBAR */}
+
+      <nav className="bg-blue-600 text-white shadow">
+
+        <div className="max-w-7xl mx-auto px-4">
+
+          <div className="flex justify-between items-center h-16">
+
+            <h1 className="font-bold text-lg">Hospital System</h1>
+
+            <div className="hidden md:flex gap-4">
+
+              {links.map(link => (
+
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  end={link.end}
+                  className={({isActive}) =>
+                    `px-3 py-2 rounded ${
+                      isActive
+                      ? "bg-blue-800"
+                      : "hover:bg-blue-700"
+                    }`
+                  }
+                >
+
+                  {link.label}
+
+                </NavLink>
+
+              ))}
+
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="bg-white text-blue-600 px-3 py-1 rounded"
             >
-              <span>{link.icon}</span>
-              <span>{link.label}</span>
-            </NavLink>
-          ))}
-        </nav>
+              Logout
+            </button>
 
-        <div className="px-5 py-4 border-t border-slate-700/50">
-          <div className="text-xs text-slate-400 mb-2 truncate">{user?.name}</div>
-          <button
-            onClick={logout}
-            className="w-full py-2 text-xs font-semibold bg-slate-700 hover:bg-slate-600
-              text-slate-300 rounded-lg transition-colors"
-          >
-            Sign Out
-          </button>
+          </div>
+
         </div>
-      </aside>
 
-      {/* Main content */}
-      <main className="ml-60 flex-1 min-h-screen">
-        <Outlet />
+      </nav>
+
+      {/* PAGE CONTENT */}
+
+      <main className="max-w-7xl mx-auto p-6">
+
+        <Outlet/>
+
       </main>
+
     </div>
+
   );
+
 };
 
 export default Layout;

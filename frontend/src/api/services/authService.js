@@ -1,4 +1,15 @@
 import API from "../axios";
 
-export const loginUser = (data) => API.post("/auth/login", data);
-export const registerUser = (data) => API.post("/auth/register", data);
+/*
+PATIENT REGISTRATION
+*/
+export const registerUser = (data) => {
+  return API.post("/auth/register", data);
+};
+
+/*
+LOGIN FOR ALL USERS
+*/
+export const loginUser = (data) => {
+  return API.post("/auth/login", data);
+};
