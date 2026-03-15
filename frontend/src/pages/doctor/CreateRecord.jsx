@@ -100,12 +100,11 @@ const CreateRecord = () => {
 
             <option value="">Select patient</option>
 
-            {patients.map(p=>(
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-
+            {patients.map(p => (
+  <option key={p.patient_id} value={p.patient_id}>  {/* ← patient_id not id */}
+    {p.name}
+  </option>
+))} 
           </Select>
 
           <Input

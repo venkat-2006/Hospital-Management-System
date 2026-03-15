@@ -8,7 +8,7 @@ const authorizeRoles = require("../middleware/roleMiddleware");
 router.get(
   "/",
   verifyToken,
-  authorizeRoles("ADMIN"),
+  authorizeRoles("ADMIN", "RECEPTIONIST"),  // ← add RECEPTIONIST
   doctorController.getDoctors
 );
 

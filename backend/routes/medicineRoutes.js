@@ -15,7 +15,7 @@ router.post(
 router.get(
   "/",
   verifyToken,
-  authorizeRoles("ADMIN", "DOCTOR", "PHARMACIST"),
+  authorizeRoles("ADMIN", "DOCTOR"),  // DOCTOR here
   medicineController.getMedicines
 );
 

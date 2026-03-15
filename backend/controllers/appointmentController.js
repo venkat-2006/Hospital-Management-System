@@ -11,23 +11,18 @@ const createAppointment = async (req, res) => {
       return res.status(404).json({ message: "Appointment request not found" });
     }
 
-    //  doctor collision check
     const doctorSlotTaken = await appointmentModel.checkDoctorSlot(doctor_id, appointment_time);
     if (doctorSlotTaken) {
       return res.status(400).json({ message: "Doctor already has an appointment at this time" });
     }
 
-    // patient collision check
     const patientSlotTaken = await appointmentModel.checkPatientSlot(patient_id, appointment_time);
     if (patientSlotTaken) {
       return res.status(400).json({ message: "Patient already has an appointment at this time" });
     }
 
     const appointment = await appointmentModel.createAppointment({
-      request_id,
-      patient_id,
-      doctor_id,
-      appointment_time
+      request_id, patient_id, doctor_id, appointment_time
     });
 
     await requestModel.updateRequestStatus(request_id, "scheduled");
@@ -64,14 +59,28 @@ const getDoctorAppointments = async (req, res) => {
     }
 
     const doctorId = doctorResult.rows[0].id;
-
     const appointments = await appointmentModel.getAppointmentsByDoctor(doctorId);
     res.json(appointments);
 
   } catch (error) {
-    console.log("ERROR",error);
+    console.error("DOCTOR APPOINTMENTS ERROR:", error);
     res.status(500).json({ message: "Error fetching doctor appointments" });
   }
 };
 
-module.exports = { createAppointment, getAppointments, getDoctorAppointments };
+const getAppointmentsByDoctorId = async (req, res) => {
+  try {
+    const appointments = await appointmentModel.getAppointmentsByDoctor(req.params.doctorId);
+    res.json(appointments);
+  } catch (error) {
+    console.error("DOCTOR SCHEDULE ERROR:", error);
+    res.status(500).json({ message: "Error fetching doctor schedule" });
+  }
+};
+
+module.exports = {
+  createAppointment,
+  getAppointments,
+  getDoctorAppointments,
+  getAppointmentsByDoctorId
+};

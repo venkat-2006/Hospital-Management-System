@@ -29,3 +29,5 @@ export const getLabReportsByPatient = (patientId) => API.get(`/lab-reports/patie
 
 // medicines
 export const getMedicines = () => API.get("/medicines");
+
+export const getPatientById = (patientId) => API.get(`/patients/${patientId}/profile`);

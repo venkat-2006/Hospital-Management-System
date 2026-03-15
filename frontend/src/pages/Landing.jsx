@@ -1,139 +1,36 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
-
+  const navigate = useNavigate();
   return (
-
-    <div className="min-h-screen bg-gray-50">
-
-      {/* NAVBAR */}
-
-      <nav className="flex justify-between items-center px-10 py-5 bg-white shadow">
-
-        <h1 className="text-2xl font-bold text-blue-600">
-          Hospital Management System
-        </h1>
-
-        <div className="space-x-4">
-
-          <Link
-            to="/login"
-            className="px-4 py-2 text-blue-600 font-medium"
-          >
-            Login
-          </Link>
-
-          <Link
-            to="/register"
-            className="px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Register
-          </Link>
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4">
+      <div className="text-center">
+        <div className="inline-flex w-20 h-20 bg-blue-500 rounded-3xl items-center justify-center text-white text-4xl font-bold shadow-lg shadow-blue-500/30 mb-6">H</div>
+        <h1 className="text-4xl font-bold text-white mb-3">Hospital Management System</h1>
+        <p className="text-slate-400 text-lg mb-10">Streamlined healthcare management for all roles</p>
+        <div className="flex gap-4 justify-center">
+          <button onClick={() => navigate("/login")}
+            className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-semibold transition shadow-lg shadow-blue-600/30"
+          >Sign In</button>
+          <button onClick={() => navigate("/register")}
+            className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-xl font-semibold transition border border-white/10"
+          >Register as Patient</button>
         </div>
-
-      </nav>
-
-
-
-      {/* HERO SECTION */}
-
-      <section className="flex flex-col items-center text-center py-24 px-6">
-
-        <h2 className="text-4xl font-bold mb-6">
-          Smart Hospital Management System
-        </h2>
-
-        <p className="max-w-xl text-gray-600 mb-8">
-          A complete digital solution for managing hospital operations including
-          appointments, medical records, prescriptions, lab reports, billing,
-          and medicine inventory. Designed for administrators, doctors,
-          patients, receptionists, and lab technicians.
-        </p>
-
-        <div className="space-x-4">
-
-          <Link
-            to="/register"
-            className="px-6 py-3 bg-green-600 text-white rounded"
-          >
-            Create Patient Account
-          </Link>
-
-          <Link
-            to="/login"
-            className="px-6 py-3 bg-blue-600 text-white rounded"
-          >
-            Login to Dashboard
-          </Link>
-
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-14 max-w-2xl mx-auto">
+          {[
+            { role: "Admin", icon: "🏥", color: "bg-rose-500/10 border-rose-500/20 text-rose-300" },
+            { role: "Doctor", icon: "👨‍⚕️", color: "bg-blue-500/10 border-blue-500/20 text-blue-300" },
+            { role: "Patient", icon: "🧑", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-300" },
+            { role: "Receptionist", icon: "📋", color: "bg-violet-500/10 border-violet-500/20 text-violet-300" },
+            { role: "Lab Tech", icon: "🧪", color: "bg-amber-500/10 border-amber-500/20 text-amber-300" },
+          ].map(r => (
+            <div key={r.role} className={`${r.color} border rounded-2xl p-4 text-center`}>
+              <div className="text-2xl mb-1">{r.icon}</div>
+              <p className="text-xs font-semibold">{r.role}</p>
+            </div>
+          ))}
         </div>
-
-      </section>
-
-
-
-      {/* FEATURES */}
-
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 px-10 pb-20">
-
-        <div className="bg-white p-6 shadow rounded">
-
-          <h3 className="text-lg font-semibold mb-2">
-            Appointment Management
-          </h3>
-
-          <p className="text-gray-600">
-            Patients can request appointments and receptionists schedule them
-            efficiently with doctors.
-          </p>
-
-        </div>
-
-
-        <div className="bg-white p-6 shadow rounded">
-
-          <h3 className="text-lg font-semibold mb-2">
-            Medical Records
-          </h3>
-
-          <p className="text-gray-600">
-            Doctors create medical records and prescriptions that patients can
-            access anytime.
-          </p>
-
-        </div>
-
-
-        <div className="bg-white p-6 shadow rounded">
-
-          <h3 className="text-lg font-semibold mb-2">
-            Lab & Billing
-          </h3>
-
-          <p className="text-gray-600">
-            Lab technicians upload test reports while the system automatically
-            manages billing and payments.
-          </p>
-
-        </div>
-
-      </section>
-
-
-
-      {/* FOOTER */}
-
-      <footer className="text-center py-6 bg-white border-t">
-
-        <p className="text-gray-500 text-sm">
-          © {new Date().getFullYear()} Hospital Management System
-        </p>
-
-      </footer>
-
+      </div>
     </div>
-
   );
-
 }

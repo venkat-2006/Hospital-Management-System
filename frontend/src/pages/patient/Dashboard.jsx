@@ -17,12 +17,14 @@ const PatientDashboard = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getMyProfile()
-      .then((res) => setProfile(res.data))
-      .catch(() => setError("Failed to load profile"))
-      .finally(() => setLoading(false));
-  }, []);
-
+  getMyProfile()
+    .then((res) => {
+      console.log(res.data);  
+      setProfile(res.data);
+    })
+    .catch(() => setError("Failed to load profile"))
+    .finally(() => setLoading(false));
+}, []);
   if (loading) return <PageWrapper><LoadingSpinner /></PageWrapper>;
   if (error) return <PageWrapper><ErrorMsg message={error} /></PageWrapper>;
 
@@ -68,3 +70,4 @@ const PatientDashboard = () => {
 };
 
 export default PatientDashboard;
+

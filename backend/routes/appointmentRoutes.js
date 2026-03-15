@@ -35,5 +35,10 @@ router.get(
   authorizeRoles("DOCTOR"),
   appointmentController.getDoctorAppointments
 );
-
+router.get(
+  "/doctor/:doctorId",
+  verifyToken,
+  authorizeRoles("RECEPTIONIST", "ADMIN"),
+  appointmentController.getAppointmentsByDoctorId
+);
 module.exports = router;

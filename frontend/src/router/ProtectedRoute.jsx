@@ -1,7 +1,24 @@
-import { Navigate, Outlet } from "react-router-dom";
+// import { Navigate, Outlet } from "react-router-dom";
+// import { useAuth } from "../context/AuthContext";
+
+// export default function ProtectedRoute({ allowedRoles }) {
+
+//   const { user } = useAuth();
+
+//   if (!user) {
+//     return <Navigate to="/login" />;
+//   }
+
+//   if (!allowedRoles.includes(user.role)) {
+//     return <Navigate to="/unauthorized" />;
+//   }
+
+//   return <Outlet />;
+// }
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function ProtectedRoute({ allowedRoles }) {
+export default function ProtectedRoute({ allowedRoles, children }) {
 
   const { user } = useAuth();
 
@@ -13,5 +30,5 @@ export default function ProtectedRoute({ allowedRoles }) {
     return <Navigate to="/unauthorized" />;
   }
 
-  return <Outlet />;
+  return children;
 }

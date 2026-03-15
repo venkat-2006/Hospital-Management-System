@@ -10,15 +10,17 @@ const ReceptionDashboard = () => {
   const [error,setError] = useState("");
 
   const { user } = useAuth();
+useEffect(() => {
 
-  useEffect(()=>{
+  getReceptionDashboard()
+    .then(res => {
+      console.log("Dashboard API Response:", res.data); // ADD THIS
+      setData(res.data);
+    })
+    .catch(() => setError("Failed to load dashboard"))
+    .finally(() => setLoading(false));
 
-    getReceptionDashboard()
-      .then(res => setData(res.data))
-      .catch(()=>setError("Failed to load dashboard"))
-      .finally(()=>setLoading(false));
-
-  },[]);
+}, []);
 
   if(loading) return <PageWrapper><LoadingSpinner/></PageWrapper>;
   if(error) return <PageWrapper><ErrorMsg message={error}/></PageWrapper>;
@@ -30,33 +32,25 @@ const ReceptionDashboard = () => {
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
 
         <StatCard
-          label="Pending Requests"
-          value={data?.pending_requests}
-          color="orange"
-          icon="📋"
-        />
+  label="Pending Requests"
+  value={data?.pendingRequests || 0}
+  color="orange"
+  icon="📋"
+/>
 
-        <StatCard
-          label="Today's Appointments"
-          value={data?.todays_appointments}
-          color="blue"
-          icon="📅"
-        />
+<StatCard
+  label="Today's Appointments"
+  value={data?.appointmentsToday || 0}
+  color="blue"
+  icon="📅"
+/>
 
-        <StatCard
-          label="Total Bills"
-          value={data?.total_bills}
-          color="green"
-          icon="💳"
-        />
-
-        <StatCard
-          label="Unpaid Bills"
-          value={data?.unpaid_bills}
-          color="red"
-          icon="⚠️"
-        />
-
+<StatCard
+  label="Patients Registered"
+  value={data?.patientsRegistered || 0}
+  color="green"
+  icon="👤"
+/>
       </div>
 
       <Card>

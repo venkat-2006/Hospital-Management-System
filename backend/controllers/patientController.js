@@ -50,13 +50,25 @@ const getPatientProfile = async (req, res) => {
     const userId = req.user.id;
 
     const result = await pool.query(
-      "SELECT id,name,email,role FROM users WHERE id=$1",
+      `SELECT 
+        u.id,
+        u.email,
+        u.role,
+        p.name,
+        p.gender,
+        p.phone,
+        p.address,
+        p.date_of_birth
+      FROM users u
+      JOIN patients p ON u.id = p.user_id
+      WHERE u.id = $1`,
       [userId]
     );
 
     res.json(result.rows[0]);
 
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Error fetching profile" });
   }
 };
@@ -199,7 +211,22 @@ const getMyBills = async (req, res) => {
 };
 
 //////////////////////////////////////////////////////////
+const getPatientById = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM patients WHERE id = $1",
+      [req.params.patientId]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching patient" });
+  }
+};
 
+// add to module.exports
 module.exports = {
   createPatient,
   getPatients,
@@ -208,5 +235,6 @@ module.exports = {
   getMyRecords,
   getMyPrescriptions,
   getMyLabReports,
-  getMyBills
+  getMyBills,
+  getPatientById  // ← add this
 };

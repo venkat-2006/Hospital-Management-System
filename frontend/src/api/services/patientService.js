@@ -24,3 +24,4 @@ export const getMyBills = () => API.get("/patients/bills");
 // payments
 export const createPayment = (data) => API.post("/payments", data);
 export const getPaymentsByBill = (billId) => API.get(`/payments/bill/${billId}`);
+export const getPatientById = (patientId) => API.get(`/patients/${patientId}/profile`);

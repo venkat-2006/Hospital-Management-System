@@ -3,13 +3,9 @@ const router = express.Router();
 
 const verifyToken = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
-
 const patientController = require("../controllers/patientController");
 
-//////////////////////////////////////////////////////////
-// ADMIN APIs
-//////////////////////////////////////////////////////////
-
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
 router.post(
   "/",
   verifyToken,
@@ -20,14 +16,11 @@ router.post(
 router.get(
   "/",
   verifyToken,
-  authorizeRoles("ADMIN"),
+  authorizeRoles("ADMIN", "RECEPTIONIST"),
   patientController.getPatients
 );
 
-//////////////////////////////////////////////////////////
-// PATIENT DASHBOARD APIs
-//////////////////////////////////////////////////////////
-
+// ─── PATIENT DASHBOARD ────────────────────────────────────────────────────────
 router.get(
   "/profile",
   verifyToken,
@@ -68,6 +61,14 @@ router.get(
   verifyToken,
   authorizeRoles("PATIENT"),
   patientController.getMyBills
+);
+
+// ─── DYNAMIC PARAM ROUTES LAST — always below static routes ──────────────────
+router.get(
+  "/:patientId/profile",
+  verifyToken,
+  authorizeRoles("DOCTOR", "ADMIN"),
+  patientController.getPatientById
 );
 
 module.exports = router;

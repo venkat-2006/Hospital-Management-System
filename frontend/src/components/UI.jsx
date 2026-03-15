@@ -200,7 +200,14 @@ export const Td = ({ children, header }) => {
     </Tag>
   );
 };
-
+export const SectionHead = ({ title, subtitle }) => (
+  <div className="mb-4">
+    <h2 className="text-xl font-semibold text-slate-800">{title}</h2>
+    {subtitle && (
+      <p className="text-sm text-slate-500">{subtitle}</p>
+    )}
+  </div>
+);
 const badgeStyles = {
   pending:      "bg-amber-50 text-amber-700 border border-amber-200",
   scheduled:    "bg-blue-50 text-blue-700 border border-blue-200",

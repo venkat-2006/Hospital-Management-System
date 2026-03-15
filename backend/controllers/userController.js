@@ -12,8 +12,7 @@ const createUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await userModel.createUser(name, email, hashedPassword, role);
-
-    if (role === "DOCTOR") {
+if (role === "DOCTOR") {
   await pool.query(
     "INSERT INTO doctors(user_id, name, specialization, experience, phone) VALUES($1, $2, $3, $4, $5)",
     [user.id, user.name, specialization, experience, phone]

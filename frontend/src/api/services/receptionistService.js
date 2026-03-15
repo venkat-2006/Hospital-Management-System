@@ -8,3 +8,6 @@ export const createBill = (data) => API.post("/bills", data);
 export const getAllBills = () => API.get("/bills");
 export const getBillsByPatient = (patientId) => API.get(`/bills/patient/${patientId}`);
 export const getPaymentsByBill = (billId) => API.get(`/payments/bill/${billId}`);
+
+export const getDoctors = () => API.get("/doctor");
+export const getDoctorSchedule = (doctorId) => API.get(`/appointments/doctor/${doctorId}`);

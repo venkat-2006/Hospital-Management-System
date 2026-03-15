@@ -53,7 +53,11 @@ const RequestLabTest = () => {
         <form onSubmit={handleSubmit}>
           <Select label="Patient" name="patient_id" value={formData.patient_id} onChange={handleChange} required>
             <option value="">Select a patient</option>
-            {patients.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+            {patients.map(p => (
+  <option key={p.patient_id} value={p.patient_id}>  {/* ← patient_id not id */}
+    {p.name}
+  </option>
+))}
           </Select>
           <Select label="Test Type" name="test_type" value={formData.test_type} onChange={handleChange} required>
             <option value="">Select test type</option>
