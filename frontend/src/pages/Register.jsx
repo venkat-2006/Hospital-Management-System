@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { registerUser } from "../api/services/authService";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {
+
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
@@ -23,7 +26,11 @@ export default function Register() {
 
       await registerUser(form);
 
-      setMsg("Registration successful. Please login.");
+      setMsg("Registration successful. Redirecting to login...");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
 
     } catch (err) {
 
@@ -35,14 +42,16 @@ export default function Register() {
 
   return (
 
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-gray-100">
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow p-8 rounded w-96"
+        className="bg-white shadow-lg p-8 rounded w-96"
       >
 
-        <h2 className="text-xl mb-6 font-bold">Patient Register</h2>
+        <h2 className="text-xl mb-6 font-bold text-center">
+          Patient Register
+        </h2>
 
         {msg && (
           <p className="mb-3 text-blue-600">{msg}</p>
@@ -50,7 +59,7 @@ export default function Register() {
 
         <input
           placeholder="Name"
-          className="border p-2 w-full mb-2"
+          className="border p-2 w-full mb-2 rounded"
           onChange={(e) =>
             setForm({ ...form, name: e.target.value })
           }
@@ -58,7 +67,7 @@ export default function Register() {
 
         <input
           placeholder="Email"
-          className="border p-2 w-full mb-2"
+          className="border p-2 w-full mb-2 rounded"
           onChange={(e) =>
             setForm({ ...form, email: e.target.value })
           }
@@ -67,7 +76,7 @@ export default function Register() {
         <input
           type="password"
           placeholder="Password"
-          className="border p-2 w-full mb-2"
+          className="border p-2 w-full mb-2 rounded"
           onChange={(e) =>
             setForm({ ...form, password: e.target.value })
           }
@@ -75,7 +84,7 @@ export default function Register() {
 
         <input
           placeholder="Phone"
-          className="border p-2 w-full mb-2"
+          className="border p-2 w-full mb-2 rounded"
           onChange={(e) =>
             setForm({ ...form, phone: e.target.value })
           }
@@ -83,7 +92,7 @@ export default function Register() {
 
         <input
           placeholder="Address"
-          className="border p-2 w-full mb-2"
+          className="border p-2 w-full mb-2 rounded"
           onChange={(e) =>
             setForm({ ...form, address: e.target.value })
           }
@@ -91,14 +100,14 @@ export default function Register() {
 
         <input
           type="date"
-          className="border p-2 w-full mb-2"
+          className="border p-2 w-full mb-2 rounded"
           onChange={(e) =>
             setForm({ ...form, date_of_birth: e.target.value })
           }
         />
 
         <select
-          className="border p-2 w-full mb-4"
+          className="border p-2 w-full mb-4 rounded"
           onChange={(e) =>
             setForm({ ...form, gender: e.target.value })
           }
@@ -111,10 +120,20 @@ export default function Register() {
         </select>
 
         <button
-          className="bg-green-600 text-white w-full py-2"
+          className="bg-green-600 text-white w-full py-2 rounded hover:bg-green-700"
         >
           Register
         </button>
+
+        <p className="mt-4 text-sm text-center">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-blue-600 hover:underline"
+          >
+            Login
+          </Link>
+        </p>
 
       </form>
 

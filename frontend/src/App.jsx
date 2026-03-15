@@ -140,7 +140,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Unauthorized from "./pages/Unauthorized";
 
-/* ADMIN */
+/* ================= ADMIN ================= */
 
 import AdminDashboard from "./pages/admin/Dashboard";
 import ManageUsers from "./pages/admin/ManageUsers";
@@ -148,7 +148,7 @@ import ManageDoctors from "./pages/admin/ManageDoctors";
 import Medicines from "./pages/admin/Medicines";
 import AdminBills from "./pages/admin/bills";
 
-/* DOCTOR */
+/* ================= DOCTOR ================= */
 
 import DoctorDashboard from "./pages/doctor/Dashboard";
 import DoctorAppointments from "./pages/doctor/MyAppointments";
@@ -158,7 +158,7 @@ import CreateRecord from "./pages/doctor/CreateRecord";
 import CreatePrescription from "./pages/doctor/CreatePrescription";
 import RequestLabTest from "./pages/doctor/RequestLabTest";
 
-/* PATIENT */
+/* ================= PATIENT ================= */
 
 import PatientDashboard from "./pages/patient/Dashboard";
 import PatientAppointments from "./pages/patient/MyAppointments";
@@ -168,123 +168,147 @@ import MyPrescriptions from "./pages/patient/MyPrescriptions";
 import MyLabReports from "./pages/patient/MyLabReports";
 import MyBills from "./pages/patient/MyBills";
 
-/* RECEPTIONIST */
+/* ================= RECEPTIONIST ================= */
 
 import ReceptionDashboard from "./pages/receptionist/Dashboard";
 import Requests from "./pages/receptionist/Requests";
 import Schedule from "./pages/receptionist/Schedule";
 import ReceptionistBills from "./pages/receptionist/Bills";
 
-/* LAB */
+/* ================= LAB ================= */
 
 import LabDashboard from "./pages/lab/Dashboard";
 import PendingTests from "./pages/lab/PendingTests";
 
-function App(){
+import Landing from "./pages/Landing";
 
-return(
+function App() {
 
-<AuthProvider>
+  return (
 
-<BrowserRouter>
+    <AuthProvider>
 
-<Routes>
+      <BrowserRouter>
 
-<Route path="/login" element={<Login/>}/>
-<Route path="/register" element={<Register/>}/>
-<Route path="/unauthorized" element={<Unauthorized/>}/>
+        <Routes>
 
-<Route path="/" element={<Navigate to="/login"/>}/>
+          {/* ===== PUBLIC ROUTES ===== */}
+<Route path="/" element={<Landing />} />
 
-{/* ADMIN */}
+<Route path="/login" element={<Login />} />
 
-<Route path="/admin" element={
-<ProtectedRoute allowedRoles={["ADMIN"]}>
-<Layout/>
-</ProtectedRoute>
-}>
+<Route path="/register" element={<Register />} />
 
-<Route index element={<AdminDashboard/>}/>
-<Route path="users" element={<ManageUsers/>}/>
-<Route path="doctors" element={<ManageDoctors/>}/>
-<Route path="medicines" element={<Medicines/>}/>
-<Route path="bills" element={<AdminBills/>}/>
+<Route path="/unauthorized" element={<Unauthorized />} />
 
-</Route>
 
-{/* DOCTOR */}
 
-<Route path="/doctor" element={
-<ProtectedRoute allowedRoles={["DOCTOR"]}>
-<Layout/>
-</ProtectedRoute>
-}>
+          {/* ===== ADMIN ROUTES ===== */}
 
-<Route index element={<DoctorDashboard/>}/>
-<Route path="appointments" element={<DoctorAppointments/>}/>
-<Route path="patients" element={<MyPatients/>}/>
-<Route path="patients/:patientId" element={<PatientDetail/>}/>
-<Route path="create-record" element={<CreateRecord/>}/>
-<Route path="create-prescription" element={<CreatePrescription/>}/>
-<Route path="request-lab" element={<RequestLabTest/>}/>
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<ManageUsers />} />
+            <Route path="doctors" element={<ManageDoctors />} />
+            <Route path="medicines" element={<Medicines />} />
+            <Route path="bills" element={<AdminBills />} />
+          </Route>
 
-</Route>
 
-{/* PATIENT */}
 
-<Route path="/patient" element={
-<ProtectedRoute allowedRoles={["PATIENT"]}>
-<Layout/>
-</ProtectedRoute>
-}>
+          {/* ===== DOCTOR ROUTES ===== */}
 
-<Route index element={<PatientDashboard/>}/>
-<Route path="appointments" element={<PatientAppointments/>}/>
-<Route path="request" element={<RequestAppointment/>}/>
-<Route path="records" element={<MyRecords/>}/>
-<Route path="prescriptions" element={<MyPrescriptions/>}/>
-<Route path="lab-reports" element={<MyLabReports/>}/>
-<Route path="bills" element={<MyBills/>}/>
+          <Route
+            path="/doctor"
+            element={
+              <ProtectedRoute allowedRoles={["DOCTOR"]}>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DoctorDashboard />} />
+            <Route path="appointments" element={<DoctorAppointments />} />
+            <Route path="patients" element={<MyPatients />} />
+            <Route path="patients/:patientId" element={<PatientDetail />} />
+            <Route path="create-record" element={<CreateRecord />} />
+            <Route path="create-prescription" element={<CreatePrescription />} />
+            <Route path="request-lab" element={<RequestLabTest />} />
+          </Route>
 
-</Route>
 
-{/* RECEPTIONIST */}
 
-<Route path="/receptionist" element={
-<ProtectedRoute allowedRoles={["RECEPTIONIST"]}>
-<Layout/>
-</ProtectedRoute>
-}>
+          {/* ===== PATIENT ROUTES ===== */}
 
-<Route index element={<ReceptionDashboard/>}/>
-<Route path="requests" element={<Requests/>}/>
-<Route path="schedule" element={<Schedule/>}/>
-<Route path="bills" element={<ReceptionistBills/>}/>
+          <Route
+            path="/patient"
+            element={
+              <ProtectedRoute allowedRoles={["PATIENT"]}>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<PatientDashboard />} />
+            <Route path="appointments" element={<PatientAppointments />} />
+            <Route path="request" element={<RequestAppointment />} />
+            <Route path="records" element={<MyRecords />} />
+            <Route path="prescriptions" element={<MyPrescriptions />} />
+            <Route path="lab-reports" element={<MyLabReports />} />
+            <Route path="bills" element={<MyBills />} />
+          </Route>
 
-</Route>
 
-{/* LAB */}
 
-<Route path="/lab" element={
-<ProtectedRoute allowedRoles={["LAB_TECH"]}>
-<Layout/>
-</ProtectedRoute>
-}>
+          {/* ===== RECEPTIONIST ROUTES ===== */}
 
-<Route index element={<LabDashboard/>}/>
-<Route path="pending" element={<PendingTests/>}/>
+          <Route
+            path="/receptionist"
+            element={
+              <ProtectedRoute allowedRoles={["RECEPTIONIST"]}>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<ReceptionDashboard />} />
+            <Route path="requests" element={<Requests />} />
+            <Route path="schedule" element={<Schedule />} />
+            <Route path="bills" element={<ReceptionistBills />} />
+          </Route>
 
-</Route>
 
-<Route path="*" element={<Navigate to="/login"/>}/>
 
-</Routes>
+          {/* ===== LAB ROUTES ===== */}
 
-</BrowserRouter>
+          <Route
+            path="/lab"
+            element={
+              <ProtectedRoute allowedRoles={["LAB_TECH"]}>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<LabDashboard />} />
+            <Route path="pending" element={<PendingTests />} />
+          </Route>
 
-</AuthProvider>
 
-);
+
+          {/* ===== UNKNOWN ROUTES ===== */}
+
+          <Route path="*" element={<Navigate to="/" />} />
+
+        </Routes>
+
+      </BrowserRouter>
+
+    </AuthProvider>
+
+  );
 
 }
 
